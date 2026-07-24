@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrical Installation Analysis - 3-Scale System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="app-title">⚡ Electrical Installation Analysis</h1>
+            <p class="app-subtitle">Three-Scale Procedure & Documentation System</p>
+        </div>
+        <nav class="scale-nav" id="scaleNav">
+            <button class="scale-btn active" data-scale="residential" onclick="switchScale('residential')">
+                <span class="scale-icon">🏠</span>
+                <span class="scale-label">Residential</span>
+                <span class="scale-desc">Single-family, duplex, small multi-family</span>
+            </button>
+            <button class="scale-btn" data-scale="commercial" onclick="switchScale('commercial')">
+                <span class="scale-icon">🏢</span>
+                <span class="scale-label">Commercial</span>
+                <span class="scale-desc">Office, retail, small industrial</span>
+            </button>
+            <button class="scale-btn" data-scale="industrial" onclick="switchScale('industrial')">
+                <span class="scale-icon">🏭</span>
+                <span class="scale-label">Industrial</span>
+                <span class="scale-desc">Manufacturing, utility, large campus</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+
+        <!-- Residential Scale -->
+        <section class="scale-content active" id="residentialContent" data-scale="residential">
+            <div class="phase-tabs" id="residentialTabs"></div>
+            <div class="phase-panels" id="residentialPanels"></div>
+        </section>
+
+        <!-- Commercial Scale -->
+        <section class="scale-content" id="commercialContent" data-scale="commercial">
+            <div class="phase-tabs" id="commercialTabs"></div>
+            <div class="phase-panels" id="commercialPanels"></div>
+        </section>
+
+        <!-- Industrial Scale -->
+        <section class="scale-content" id="industrialContent" data-scale="industrial">
+            <div class="phase-tabs" id="industrialTabs"></div>
+            <div class="phase-panels" id="industrialPanels"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-actions">
+            <button class="btn btn-primary" onclick="exportToPDF()">📄 Export PDF Report</button>
+            <button class="btn btn-secondary" onclick="printReport()">🖨️ Print Report</button>
+            <button class="btn btn-secondary" onclick="saveProgress()">💾 Save Progress</button>
+            <button class="btn btn-secondary" onclick="loadProgress()">📂 Load Progress</button>
+        </div>
+        <p class="footer-note">NEC 2023 Compliant | Data persisted locally</p>
+    </footer>
+
+    <script src="data/residential.js"></script>
+    <script src="data/commercial.js"></script>
+    <script src="data/industrial.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
