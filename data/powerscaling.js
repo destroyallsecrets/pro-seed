@@ -333,3 +333,6 @@ const powerScalingData = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = powerScalingData;
 }
+
+// Export for browser
+window.powerScalingData = powerScalingData;
