@@ -9,7 +9,7 @@
     // ========================================
     const AppState = {
         currentScale: 'residential',
-        scales: ['residential', 'commercial', 'industrial'],
+        scales: ['residential', 'commercial', 'industrial', 'powerscaling'],
         phaseTabs: {},
         checklists: {},
         notes: {},
@@ -20,7 +20,8 @@
     const scaleData = {
         residential: window.residentialData,
         commercial: window.commercialData,
-        industrial: window.industrialData
+        industrial: window.industrialData,
+        powerscaling: window.powerScalingData
     };
 
     // ========================================
@@ -31,17 +32,20 @@
         scaleContents: {
             residential: document.getElementById('residentialContent'),
             commercial: document.getElementById('commercialContent'),
-            industrial: document.getElementById('industrialContent')
+            industrial: document.getElementById('industrialContent'),
+            powerscaling: document.getElementById('powerscalingContent')
         },
         phaseTabs: {
             residential: document.getElementById('residentialTabs'),
             commercial: document.getElementById('commercialTabs'),
-            industrial: document.getElementById('industrialTabs')
+            industrial: document.getElementById('industrialTabs'),
+            powerscaling: document.getElementById('powerscalingTabs')
         },
         phasePanels: {
             residential: document.getElementById('residentialPanels'),
             commercial: document.getElementById('commercialPanels'),
-            industrial: document.getElementById('industrialPanels')
+            industrial: document.getElementById('industrialPanels'),
+            powerscaling: document.getElementById('powerscalingPanels')
         },
         progressFill: document.getElementById('progressFill'),
         progressText: document.getElementById('progressText')

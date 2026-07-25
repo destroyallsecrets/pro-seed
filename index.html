@@ -28,6 +28,11 @@
                 <span class="scale-label">Industrial</span>
                 <span class="scale-desc">Manufacturing, utility, large campus</span>
             </button>
+            <button class="scale-btn" data-scale="powerscaling" onclick="switchScale('powerscaling')">
+                <span class="scale-icon">⚡</span>
+                <span class="scale-label">Power Scaling</span>
+                <span class="scale-desc">High-to-low power reduction procedures</span>
+            </button>
         </nav>
     </header>
 
@@ -57,6 +62,12 @@
             <div class="phase-tabs" id="industrialTabs"></div>
             <div class="phase-panels" id="industrialPanels"></div>
         </section>
+
+        <!-- Power Scaling Scale -->
+        <section class="scale-content" id="powerscalingContent" data-scale="powerscaling">
+            <div class="phase-tabs" id="powerscalingTabs"></div>
+            <div class="phase-panels" id="powerscalingPanels"></div>
+        </section>
     </main>
 
     <footer class="footer">
@@ -72,6 +83,7 @@
     <script src="data/residential.js"></script>
     <script src="data/commercial.js"></script>
     <script src="data/industrial.js"></script>
+    <script src="data/powerscaling.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
