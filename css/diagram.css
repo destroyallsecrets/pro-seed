@@ -1,0 +1,426 @@
+/* Diagram Page Styles - Electrical Power Scaling Interactive Diagrams */
+
+/* ========================================
+   PHASE NAVIGATION
+   ======================================== */
+.phase-nav {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.phase-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.phase-nav-btn:hover {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.phase-nav-btn.active {
+    background: linear-gradient(135deg, rgba(88,166,255,0.15), rgba(88,166,255,0.05));
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    box-shadow: 0 0 0 1px var(--accent-blue), 0 4px 12px rgba(88,166,255,0.15);
+}
+
+.phase-nav-btn .phase-icon {
+    font-size: 1.25rem;
+}
+
+.phase-nav-btn .phase-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* ========================================
+   PHASE CONTENT
+   ======================================== */
+.phase-content {
+    display: none;
+}
+
+.phase-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.phase-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.phase-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.phase-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* ========================================
+   SUB-PHASE TABS (within each phase)
+   ======================================== */
+.phase-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.phase-tab {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all var(--transition);
+}
+
+.phase-tab:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}
+
+.phase-tab.active {
+    color: var(--accent-blue);
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    border-bottom-color: var(--bg-primary);
+    margin-bottom: -1px;
+}
+
+.phase-tab.complete .phase-number {
+    background: var(--accent-green);
+    color: var(--bg-primary);
+}
+
+/* ========================================
+   PHASE PANELS
+   ======================================== */
+.phase-panels {
+    min-height: 400px;
+}
+
+.phase-panel {
+    display: none;
+}
+
+.phase-panel.active {
+    display: block;
+    animation: slideUp 0.3s ease;
+}
+
+/* ========================================
+   DIAGRAM GALLERY
+   ======================================== */
+.diagram-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.diagram-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition);
+}
+
+.diagram-card:hover {
+    border-color: var(--accent-blue);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.diagram-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.diagram-title {
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.diagram-category {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent-blue);
+    color: var(--bg-primary);
+    font-weight: 600;
+}
+
+.diagram-body {
+    padding: 1.25rem;
+    min-height: 300px;
+}
+
+.diagram-canvas {
+    width: 100%;
+    height: 300px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: crosshair;
+}
+
+.diagram-canvas:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.diagram-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.diagram-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.diagram-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.diagram-btn {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--transition);
+}
+
+.diagram-btn:hover {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: var(--bg-primary);
+}
+
+.diagram-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: var(--bg-primary);
+}
+
+.diagram-btn.primary:hover {
+    background: #79b8ff;
+}
+
+/* ========================================
+   INTERACTIVE SVG DIAGRAMS
+   ======================================== */
+.diagram-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.diagram-svg .interactive {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.diagram-svg .interactive:hover {
+    filter: brightness(1.2) drop-shadow(0 0 4px currentColor);
+}
+
+.diagram-svg .interactive:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.diagram-tooltip {
+    position: fixed;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    max-width: 300px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.diagram-tooltip.visible {
+    opacity: 1;
+}
+
+.diagram-tooltip h5 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--accent-blue);
+}
+
+.diagram-tooltip .ref {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* ========================================
+   LEGEND
+   ======================================== */
+.diagram-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+/* ========================================
+   ANIMATION
+   ======================================== */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.diagram-animated {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+    .diagram-gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .phase-nav-btn {
+        min-width: 100px;
+        padding: 0.625rem 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .phase-nav {
+        flex-wrap: wrap;
+    }
+    
+    .phase-nav-btn {
+        flex: 1;
+        min-width: 0;
+        padding: 0.5rem 0.5rem;
+    }
+    
+    .phase-nav-btn .phase-label {
+        font-size: 0.75rem;
+    }
+    
+    .diagram-canvas {
+        height: 250px;
+    }
+    
+    .diagram-controls {
+        flex-direction: column;
+    }
+    
+    .diagram-btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+@media print {
+    .phase-nav, .phase-tabs, .diagram-controls, .diagram-btn, .footer, .back-link {
+        display: none !important;
+    }
+    
+    .phase-content {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+    
+    .phase-panel {
+        display: block !important;
+    }
+    
+    .diagram-canvas {
+        border: 1px solid #ccc !important;
+        background: white !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}

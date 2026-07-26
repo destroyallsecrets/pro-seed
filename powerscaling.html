@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Scaling Analysis - Electrical Installation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/diagram.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="back-link" title="Back to Main App">← Electrical Analysis</a>
+            <h1 class="app-title">⚡ Power Scaling Analysis</h1>
+            <p class="app-subtitle">High-to-Low Power Reduction Procedures & Interactive Diagrams</p>
+        </div>
+        <nav class="phase-nav" id="phaseNav"></nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+
+        <!-- Phase Content Panels -->
+        <section class="phase-content active" id="phase-assessment" data-phase="assessment">
+            <div class="phase-tabs" id="assessmentTabs"></div>
+            <div class="phase-panels" id="assessmentPanels"></div>
+        </section>
+
+        <section class="phase-content" id="phase-derating" data-phase="derating">
+            <div class="phase-tabs" id="deratingTabs"></div>
+            <div class="phase-panels" id="deratingPanels"></div>
+        </section>
+
+        <section class="phase-content" id="phase-tiering" data-phase="tiering">
+            <div class="phase-tabs" id="tieringTabs"></div>
+            <div class="phase-panels" id="tieringPanels"></div>
+        </section>
+
+        <section class="phase-content" id="phase-preservation" data-phase="preservation">
+            <div class="phase-tabs" id="preservationTabs"></div>
+            <div class="phase-panels" id="preservationPanels"></div>
+        </section>
+
+        <section class="phase-content" id="phase-optimization" data-phase="optimization">
+            <div class="phase-tabs" id="optimizationTabs"></div>
+            <div class="phase-panels" id="optimizationPanels"></div>
+        </section>
+
+        <section class="phase-content" id="phase-documentation" data-phase="documentation">
+            <div class="phase-tabs" id="documentationTabs"></div>
+            <div class="phase-panels" id="documentationPanels"></div>
+        </section>
+
+        <!-- Interactive Diagrams Section -->
+        <section class="phase-content" id="phase-diagrams" data-phase="diagrams">
+            <div class="phase-header">
+                <h2>📊 Interactive Diagrams</h2>
+                <p class="phase-description">Visual learning tools for power scaling concepts. Click diagrams to explore.</p>
+            </div>
+            <div class="diagram-gallery" id="diagramGallery"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-actions">
+            <button class="btn btn-primary" onclick="exportToPDF()">📄 Export PDF Report</button>
+            <button class="btn btn-secondary" onclick="printReport()">🖨️ Print Report</button>
+            <button class="btn btn-secondary" onclick="saveProgress()">💾 Save Progress</button>
+            <button class="btn btn-secondary" onclick="loadProgress()">📂 Load Progress</button>
+        </div>
+        <p class="footer-note">NEC 2023 / IEEE 141,242,399,519,1584 / NFPA 70E,70B,110 Compliant</p>
+    </footer>
+
+    <script src="data/powerscaling.js"></script>
+    <script src="data/diagrams.js"></script>
+    <script src="js/powerscaling-app.js"></script>
+</body>
+</html>
