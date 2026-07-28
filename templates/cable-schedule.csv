@@ -1,0 +1,5 @@
+Project,Drawing,From,To,Circuit #,Load Description,Load (kW),Voltage,Phase,Load (A),PF,Continuous?,Diversity Factor,Design Current (A),Conductor Material,Conductor Size (AWG/kcmil),Insulation Type,Conduit Size,Conduit Type,Conduit Length (ft),# of CCC,Ambient Temp (°C),Rooftop?,Derated Ampacity,Voltage Drop (%),Notes
+Project Alpha,E-101,MDP-1,Panel A,1,Lighting - Office,15,277,1,54,0.9,Yes,0.8,54,Copper,10,THHN,3/4,EMT,75,4,30,No,28,1.2,
+Project Alpha,E-101,MDP-1,Panel A,2,Receptacles - Office,12,120,1,100,1.0,No,1.0,100,Copper,8,THHN,1,EMT,85,6,30,No,45,2.1,
+Project Alpha,E-101,MDP-1,AHU-1,3,AHU-1 Motor,25,480,3,30,0.85,Yes,1.0,38,Copper,6,THHN,1-1/4,EMT,120,3,30,No,52,1.8,
+Project Alpha,E-101,MDP-1,CHILLER,4,Chiller Compressor,150,480,3,180,0.88,Yes,1.0,225,Copper,4/0,THHN,3,RMC,200,3,40,Yes,245,2.5

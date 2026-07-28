@@ -8,21 +8,34 @@
     // APP STATE
     // ========================================
     const AppState = {
-        currentScale: 'residential',
-        scales: ['residential', 'commercial', 'industrial', 'powerscaling'],
-        phaseTabs: {},
-        checklists: {},
-        notes: {},
-        progress: {}
-    };
+            currentScale: 'residential',
+            scales: ['residential', 'commercial', 'industrial', 'powerscaling', 'calculators'],
+            phaseTabs: {},
+            checklists: {},
+            notes: {},
+            progress: {}
+        };
 
-    // Scale data references (loaded via script tags)
-    const scaleData = {
-        residential: window.residentialData,
-        commercial: window.commercialData,
-        industrial: window.industrialData,
-        powerscaling: window.powerScalingData
-    };
+        // Scale data references (loaded via script tags)
+        const scaleData = {
+            residential: window.residentialData,
+            commercial: window.commercialData,
+            industrial: window.industrialData,
+            powerscaling: window.powerScalingData
+        };
+
+        // DOM Elements for calculator scales (loaded from calc-app.js)
+        const calculatorElements = {
+            scaleContents: {
+                calculators: document.getElementById('calculatorsContent')
+            },
+            phaseTabs: {
+                calculators: document.getElementById('calculatorsTabs')
+            },
+            phasePanels: {
+                calculators: document.getElementById('calculatorsPanels')
+            }
+        };
 
     // ========================================
     // DOM ELEMENTS
@@ -33,19 +46,22 @@
             residential: document.getElementById('residentialContent'),
             commercial: document.getElementById('commercialContent'),
             industrial: document.getElementById('industrialContent'),
-            powerscaling: document.getElementById('powerscalingContent')
+            powerscaling: document.getElementById('powerscalingContent'),
+            calculators: document.getElementById('calculatorsContent')
         },
         phaseTabs: {
             residential: document.getElementById('residentialTabs'),
             commercial: document.getElementById('commercialTabs'),
             industrial: document.getElementById('industrialTabs'),
-            powerscaling: document.getElementById('powerscalingTabs')
+            powerscaling: document.getElementById('powerscalingTabs'),
+            calculators: document.getElementById('calculatorsTabs')
         },
         phasePanels: {
             residential: document.getElementById('residentialPanels'),
             commercial: document.getElementById('commercialPanels'),
             industrial: document.getElementById('industrialPanels'),
-            powerscaling: document.getElementById('powerscalingPanels')
+            powerscaling: document.getElementById('powerscalingPanels'),
+            calculators: document.getElementById('calculatorsPanels')
         },
         progressFill: document.getElementById('progressFill'),
         progressText: document.getElementById('progressText')
