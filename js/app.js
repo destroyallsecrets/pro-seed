@@ -18,11 +18,12 @@
 
         // Scale data references (loaded via script tags)
         const scaleData = {
-            residential: window.residentialData,
-            commercial: window.commercialData,
-            industrial: window.industrialData,
-            powerscaling: window.powerScalingData
-        };
+                residential: window.residentialData,
+                commercial: window.commercialData,
+                industrial: window.industrialData,
+                powerscaling: window.powerScalingData,
+                calculators: { phases: [], label: 'Calculators', icon: '🔧' }
+            };
 
         // DOM Elements for calculator scales (loaded from calc-app.js)
         const calculatorElements = {
