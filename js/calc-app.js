@@ -1,5 +1,6 @@
 // Cable/Conduit/Voltage Drop Calculator - Unified UI
 // Uses cableCalcData and conduitFillData from data files
+// Initializes on demand when calculators scale is activated
 
 (function() {
     'use strict';
@@ -23,17 +24,23 @@
     };
 
     // ========================================
-    // INITIALIZATION
+    // PUBLIC API - called when calculators scale is activated
     // ========================================
-    document.addEventListener('DOMContentLoaded', function() {
+    window.initCalculators = function() {
+        if (window._calculatorsInitialized) return;
+        window._calculatorsInitialized = true;
+
         cacheElements();
         initCableCalculator();
         initConduitCalculator();
         initVoltageDropCalculator();
         initTemplateDownloads();
         updateProgress();
-    });
+    };
 
+    // ========================================
+    // CACHE ELEMENTS
+    // ========================================
     function cacheElements() {
         // Cable Calculator
         elements.cableForm = document.getElementById('cableCalcForm');
@@ -124,11 +131,11 @@
         if (params.continuous) requiredAmps *= 1.25;
 
         // Get correction factors
-        const tempFactor = data.getTempFactor(params.ambientTempC);
-        const rooftopAdder = data.getRooftopAdder(params.conduitHeightIn);
+        const tempFactor = window.cableCalcData.getTempFactor(params.ambientTempC);
+        const rooftopAdder = window.cableCalcData.getRooftopAdder(params.conduitHeightIn);
         const effectiveTempC = params.ambientTempC + rooftopAdder.adderC;
-        const effectiveTempFactor = data.getTempFactor(effectiveTempC);
-        const fillFactor = data.getRacewayFillFactor(params.ccc);
+        const effectiveTempFactor = window.cableCalcData.getTempFactor(effectiveTempC);
+        const fillFactor = window.cableCalcData.getRacewayFillFactor(params.ccc);
         const totalFactor = effectiveTempFactor * fillFactor;
 
         // Find suitable conductor
@@ -141,9 +148,9 @@
                 const vdPct = (vd / params.voltage) * 100;
 
                 // Check conduit fill
-                const condArea = cableCalcData.getConductorArea(cond.awg);
+                const condArea = window.cableCalcData.getConductorArea(cond.awg);
                 const totalCondArea = condArea * params.ccc;
-                const conduitArea = cableCalcData.getConduitArea(params.conduitSize, params.conduitType);
+                const conduitArea = window.cableCalcData.getConduitArea(params.conduitSize, params.conduitType);
                 const fillPct = conduitArea > 0 ? (totalCondArea / conduitArea) * 100 : 0;
 
                 recommended = {
@@ -516,11 +523,12 @@ Project Alpha,E-101,MDP-1,CHILLER,4,Chiller Compressor,150,480,3,180,0.88,Yes,1.
     }
 
     function getConduitScheduleTemplate() {
-        return `Project,Drawing,Conduit Tag,From,To,Conduit Type,Conduit Size,Conduit Material,Run Length (ft),# of Bends,Conductor 1 (AWG/Type),Conductor 2 (AWG/Type),Conductor 3 (AWG/Type),Conductor 4 (AWG/Type),Conductor 5 (AWG/Type),Conductor 6 (AWG/Type),Total CCC,Fill %,Support Spacing (ft),Pull Box Needed?,Notes
-Project Alpha,E-101,C-101,MDP-1,Panel A,EMT,1,Steel,85,2,8 THHN,8 THHN,8 THHN,8 THHN,8 THHN,8 THHN,6,42%,8,No,
-Project Alpha,E-101,C-102,MDP-1,AHU-1,RMC,1-1/4,Steel,120,4,6 THHN,6 THHN,6 THHN,10 THHN (GRD),,,4,38%,10,No,
-Project Alpha,E-101,C-103,MDP-1,CHILLER,PVC40,3,PVC,200,6,4/0 THHN,4/0 THHN,4/0 THHN,2 THHN (GRD),,,4,35%,10,Yes,
-Project Alpha,E-101,C-104,Panel A,RECEPT-1,EMT,3/4,Steel,45,1,12 THHN,12 THHN,12 THHN,12 THHN (GRD),,,4,28%,8,No
+        return `Project,Drawing,Conduit Tag,From,To,Conduit Size,Conduit Type,Conduit Length (ft),# of Bends,Fill Type,Max Fill %,# of Conductors,Conductor Sizes,Insulation Type,Fill Area (sq in),Conduit Area 40% (sq in),Fill %,Compliant?,Pull Tension (lbs),Lubricant?,Notes
+Project Alpha,E-101,C-001,MDP-1,Panel A,3,RMC,85,4,Power,40,4,4/0,THHN,0.3237,1.342,36.2%,Yes,450,Yes,Feeder to Panel A
+Project Alpha,E-101,C-002,MDP-1,AHU-1,1-1/4,EMT,120,3,Power,40,3,6,THHN,0.1521,0.598,25.4%,Yes,280,Yes,AHU-1 Motor
+Project Alpha,E-101,C-003,MDP-1,CHILLER,3,RMC,200,5,Power,40,3,4/0,THHN,0.3237,1.342,24.1%,Yes,850,Yes,Chiller Feeder
+Project Alpha,E-101,C-004,Panel A,Lighting-1,3/4,EMT,75,2,Lighting,40,6,12,THHN,0.0798,0.213,37.5%,Yes,120,No,Lighting Circuit
+Project Alpha,E-101,C-005,Panel A,REC-1,1,EMT,85,2,Receptacles,40,6,10,THHN,0.1266,0.346,36.6%,Yes,250,No,Receptacle Circuit
 `;
     }
 
@@ -531,15 +539,19 @@ MDP-1,Main Electrical Room,480/277,3Ø4W,800,600,Utility,2,Receptacles - Floor 1
 MDP-1,Main Electrical Room,480/277,3Ø4W,800,600,Utility,3,AHU-1,30,480,3,36,50,3,6,1-1/4 EMT,
 MDP-1,Main Electrical Room,480/277,3Ø4W,800,600,Utility,4,Chiller,150,480,3,180,250,3,4/0,3 RMC,
 Panel A,Electrical Room 1,208/120,3Ø4W,225,200,MDP-1,1,Lighting - Corridor,8,120,1,67,70,1,4,3/4 EMT,
-Panel A,Electrical Room 1,208/120,3Ø4W,225,200,MDP-1,2,Receptacles - Office,12,120,1,100,125,1,3,1 EMT
+Panel A,Electrical Room 1,208/120,3Ø4W,225,200,MDP-1,2,Receptacles - Office,12,120,1,100,125,1,3,1 EMT,
+Panel A,Electrical Room 1,208/120,3Ø4W,225,200,MDP-1,3,Server Room UPS,15,208,3,42,50,3,8,3/4 EMT,
+Panel B,Electrical Room 2,208/120,3Ø4W,225,200,MDP-1,1,Lighting - Floor 2,8,120,1,67,70,1,4,3/4 EMT,
+Panel B,Electrical Room 2,208/120,3Ø4W,225,200,MDP-1,2,Receptacles - Lab,15,120,1,125,150,1,1/0,1-1/4 EMT,
+Panel B,Electrical Room 2,208/120,3Ø4W,225,200,MDP-1,3,Fume Hoods,25,208,3,69,90,3,2,1 EMT
 `;
     }
 
     function getCablePullRecordTemplate() {
         return `Project,Date,Conduit Tag,From,To,Conductor Type,Conductor Size,# Conductors,Pull Length (ft),Lubricant Used,Lubricant Qty (gal),Pulling Tension (lbs),Max Tension Rating (lbs),Sidewall Pressure (lbs/ft),Pull Time (min),Crew Size,Equipment Used,Measured Tension (lbs),Result,Notes
-Project Alpha,2024-01-15,C-101,MDP-1,Panel A,THHN,8,6,85,Ideal ClearGlide,1,120,500,15,25,3,Power tug + rollers,95,Pass,
-Project Alpha,2024-01-16,C-103,MDP-1,Chiller,THHN,4/0,3,200,Polywater,2,450,1200,45,60,4,Power tug + rollers + basket,410,Pass,
-Project Alpha,2024-01-17,C-102,MDP-1,AHU-1,THHN,6,4,120,Ideal ClearGlide,1,280,800,20,40,3,Power tug,250,Pass
+Project Alpha,2024-01-15,C-001,MDP-1,Panel A,THHN,8,6,85,Ideal ClearGlide,1,120,500,15,25,3,Power tug + rollers,95,Pass,
+Project Alpha,2024-01-16,C-003,MDP-1,Chiller,THHN,4/0,3,200,Polywater,2,450,1200,45,60,4,Power tug + rollers + basket,410,Pass,
+Project Alpha,2024-01-17,C-002,MDP-1,AHU-1,THHN,6,4,120,Ideal ClearGlide,1,280,800,20,40,3,Power tug,250,Pass
 `;
     }
 })();
