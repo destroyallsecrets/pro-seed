@@ -8,36 +8,22 @@
     // APP STATE
     // ========================================
     const AppState = {
-            currentScale: 'residential',
-            scales: ['residential', 'commercial', 'industrial', 'powerscaling', 'calculators'],
-            phaseTabs: {},
-            checklists: {},
-            notes: {},
-            progress: {}
-        };
+        currentScale: 'residential',
+        scales: ['residential', 'commercial', 'industrial', 'powerscaling', 'calculators'],
+        phaseTabs: {},
+        checklists: {},
+        notes: {},
+        progress: {}
+    };
 
-        // Scale data references (loaded via script tags)
-                const scaleData = {
-                    residential: window.residentialData,
-                    commercial: window.commercialData,
-                    industrial: window.industrialData,
-                    powerscaling: window.powerScalingData,
-                    calculators: { phases: [], label: 'Calculators', icon: '🔧' }
-                };
-            };
-
-        // DOM Elements for calculator scales (loaded from calc-app.js)
-        const calculatorElements = {
-            scaleContents: {
-                calculators: document.getElementById('calculatorsContent')
-            },
-            phaseTabs: {
-                calculators: document.getElementById('calculatorsTabs')
-            },
-            phasePanels: {
-                calculators: document.getElementById('calculatorsPanels')
-            }
-        };
+    // Scale data references (loaded via script tags)
+    const scaleData = {
+        residential: window.residentialData,
+        commercial: window.commercialData,
+        industrial: window.industrialData,
+        powerscaling: window.powerScalingData,
+        calculators: { phases: [], label: 'Calculators', icon: '🔧' }
+    };
 
     // ========================================
     // DOM ELEMENTS
@@ -99,8 +85,15 @@
         AppState.currentScale = scale;
         updateProgress();
 
-        // Focus first incomplete phase
-        setTimeout(() => focusFirstIncomplete(scale), 100);
+        // Initialize calculators if switching to calculators scale
+        if (scale === 'calculators') {
+            window.initCalculators && window.initCalculators();
+        }
+
+        // Focus first incomplete phase (skip calculators as it has no phases)
+        if (scale !== 'calculators') {
+            setTimeout(() => focusFirstIncomplete(scale), 100);
+        }
     };
 
     // ========================================
@@ -116,7 +109,15 @@
 
     function initializeScale(scale) {
         const data = scaleData[scale];
-        if (!data || !data.phases) return;
+        if (!data) return;
+
+        // For calculators scale, we don't have phases to initialize
+        if (scale === 'calculators') {
+            // Calculators are initialized by calc-app.js
+            return;
+        }
+
+        if (!data.phases) return;
 
         const tabsContainer = elements.phaseTabs[scale];
         const panelsContainer = elements.phasePanels[scale];
@@ -220,16 +221,16 @@
             <div class="checklist-item ${isComplete ? 'complete' : ''}" data-item-id="${itemId}">
                 <div class="checklist-checkbox ${isComplete ? 'checked' : ''}" 
                      data-item-id="${itemId}" 
-                     onclick="toggleChecklistItem('${itemId}')" 
-                     role="checkbox" 
+                     onclick="toggleChecklistItem('${itemId}')"
+                     role="checkbox"
                      aria-checked="${isComplete}">
                     ✓
                 </div>
                 <div class="checklist-content">
                     <div class="checklist-text">${item.text}${item.ref ? ` <code>${item.ref}</code>` : ''}</div>
                     ${item.ref ? `<div class="checklist-ref">${item.ref}</div>` : ''}
-                    <textarea class="checklist-notes" 
-                              data-item-id="${itemId}" 
+                    <textarea class="checklist-notes"
+                              data-item-id="${itemId}"
                               placeholder="Add notes..."
                               onchange="saveNote('${itemId}', this.value)">${note}</textarea>
                 </div>
@@ -498,95 +499,66 @@
                     .checklist-item.complete .text { text-decoration: line-through; color: #95a5a6; }
                     .checkbox { width: 20px; height: 20px; border: 2px solid #bdc3c7; margin-right: 10px; flex-shrink: 0; }
                     .checkbox.checked { background: #27ae60; border-color: #27ae60; color: white; display: flex; align-items: center; justify-content: center; }
-                    .ref { font-size: 0.8em; color: #7f8c8d; font-family: monospace; margin-top: 4px; }
-                    .notes { margin-top: 8px; padding: 8px; background: #fff; border: 1px solid #ddd; font-size: 0.85em; }
-                    .phase { page-break-inside: avoid; margin-bottom: 30px; }
-                    .card { border: 1px solid #ddd; border-radius: 4px; margin: 15px 0; }
-                    .card-header { background: #ecf0f1; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #ddd; }
-                    .progress { background: #ecf0f1; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
-                    .progress-bar { height: 20px; background: #bdc3c7; border-radius: 10px; overflow: hidden; }
-                    .progress-fill { height: 100%; background: linear-gradient(90deg, #3498db, #27ae60); }
                 </style>
             </head>
             <body>
-                <h1>⚡ Electrical Installation Analysis Report</h1>
-                <div class="meta">
-                    <strong>Scale:</strong> ${data.icon} ${data.label} (${data.description})<br>
-                    <strong>Service Typical:</strong> ${data.serviceTypical}<br>
-                    <strong>Generated:</strong> ${now}<br>
-                    <strong>Standard:</strong> NEC 2023
-                </div>
-        `;
-
-        // Calculate overall progress
-        let total = 0, completed = 0;
-        data.phases.forEach(phase => {
-            if (phase.cards) {
-                phase.cards.forEach(card => {
-                    if (card.checklist) {
-                        card.checklist.forEach((item, itemIndex) => {
-                            const itemId = `${scale}-${phase.id}-${card.id}-${itemIndex}`;
-                            total++;
-                            if (AppState.checklists[scale]?.[itemId]) completed++;
-                        });
-                    }
-                });
-            }
-        });
-        const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-        html += `
-            <div class="progress">
-                <strong>Overall Progress: ${percentage}% (${completed}/${total} items complete)</strong>
-                <div class="progress-bar"><div class="progress-fill" style="width: ${percentage}%"></div></div>
-            </div>
+                <div class="container">
+                    <h1>Electrical Analysis Report - ${data.label}</h1>
+                    <div class="meta">Generated on ${now}</div>
         `;
 
         data.phases.forEach(phase => {
-            const phaseComplete = isPhaseComplete(scale, phase.id);
             html += `
-                <div class="phase">
-                    <h2>${phase.icon} Phase ${phase.number}: ${phase.title} ${phaseComplete ? '✅' : ''}</h2>
-                    <p>${phase.description}</p>
+                <h2>Phase ${phase.number}: ${phase.title}</h2>
+                <p>${phase.description}</p>
             `;
 
             if (phase.cards) {
                 phase.cards.forEach(card => {
-                    html += `<div class="card"><div class="card-header">${card.icon} ${card.title}</div>`;
+                    html += `
+                        <h3>${card.icon} ${card.title}</h3>
+                    `;
                     if (card.checklist) {
-                        html += '<div class="checklist">';
+                        html += `<div class="checklist">`;
                         card.checklist.forEach((item, itemIndex) => {
                             const itemId = `${scale}-${phase.id}-${card.id}-${itemIndex}`;
-                            const isDone = AppState.checklists[scale]?.[itemId] || false;
+                            const isChecked = AppState.checklists[scale]?.[itemId] === false;
                             const note = AppState.notes[scale]?.[itemId] || '';
                             html += `
-                                <div class="checklist-item ${isDone ? 'complete' : ''}">
-                                    <div class="checkbox ${isDone ? 'checked' : ''}">${isDone ? '✓' : ''}</div>
-                                    <div>
-                                        <div class="text">${item.text}${item.ref ? ` <span class="ref">[${item.ref}]</span>` : ''}</div>
-                                        ${note ? `<div class="notes">Notes: ${note}</div>` : ''}
+                                <div class="checklist-item ${!isChecked ? 'complete' : ''}">
+                                    <div class="checkbox ${!isChecked ? 'checked' : ''}"></div>
+                                    <div class="checklist-content">
+                                        <div class="checklist-text">${item.text}${item.ref ? ` <code>${item.ref}</code>` : ''}</div>
+                                        ${note ? `<div class="checklist-note">${note}</div>` : ''}
                                     </div>
                                 </div>
                             `;
                         });
-                        html += '</div>';
+                        html += `</div>`;
                     }
-                    html += '</div>';
                 });
             }
-            html += '</div>';
+
+            if (phase.deliverables && phase.deliverables.length > 0) {
+                html += `<h3>Deliverables</h3><ul>`;
+                phase.deliverables.forEach(deliverable => {
+                    html += `<li>${deliverable}</li>`;
+                });
+                html += `</ul>`;
+            }
+
+            html += `<hr>`;
         });
 
         html += `
-                <hr style="margin-top: 40px;">
-                <p style="color: #95a5a6; font-size: 0.85em; text-align: center;">
-                    Generated by Electrical Installation Analysis 3-Scale System | NEC 2023 Compliant
-                </p>
+                </div>
+                <div class="footer">
+                    <p>Generated by Electrical Installation Analysis Tool</p>
+                </div>
             </body>
             </html>
         `;
 
         return html;
     }
-
 })();

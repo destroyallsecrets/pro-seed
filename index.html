@@ -29,7 +29,7 @@
             <button class="scale-btn" data-scale="industrial">
                 <span class="scale-icon">🏭</span>
                 <span class="scale-label">Industrial</span>
-                <span class="scale-desc">Manufacturing, utility, campus (>100k sq ft)</span>
+                <span class="scale-desc">Manufacturing, utility, large campus (>100k sq ft)</span>
             </button>
             <button class="scale-btn" data-scale="powerscaling">
                 <span class="scale-icon">⚡</span>
@@ -57,7 +57,219 @@
             <div id="commercialContent" class="scale-content"></div>
             <div id="industrialContent" class="scale-content"></div>
             <div id="powerscalingContent" class="scale-content"></div>
-            <div id="calculatorsContent" class="scale-content"></div>
+            <div id="calculatorsContent" class="scale-content">
+                <!-- Cable Sizing Calculator -->
+                <section class="calculator-section">
+                    <h2>Cable Sizing Calculator</h2>
+                    <form id="cableCalcForm">
+                        <div class="form-group">
+                            <label for="loadKW">Load (kW):</label>
+                            <input type="number" class="form-control" id="loadKW" placeholder="Enter load in kW" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="voltage">Voltage (V):</label>
+                            <input type="number" class="form-control" id="voltage" placeholder="Enter voltage" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phase">Phase:</label>
+                            <select class="form-control" id="phase">
+                                <option value="1P">Single Phase (1P)</option>
+                                <option value="3P">Three Phase (3P)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pf">Power Factor (PF):</label>
+                            <input type="number" class="form-control" id="pf" placeholder="Enter power factor (0.0-1.0)" min="0" max="1" step="0.01" value="0.8" required>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="continuous"> Continuous Load (125% factor)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="ambientC">Ambient Temperature (°C):</label>
+                            <input type="number" class="form-control" id="ambientC" placeholder="Enter ambient temperature" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="conduitType">Conduit Type:</label>
+                            <select class="form-control" id="conduitType">
+                                <option value="EMT">EMT</option>
+                                <option value="PVC">PVC</option>
+                                <option value="RMC">RMC</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="conductorCount">Number of Current-Carrying Conductors:</label>
+                            <input type="number" class="form-control" id="conductorCount" placeholder="Enter number of conductors" value="3" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="rooftop"> Conduit in Rooftop (Adder)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="lengthFt">Length (ft):</label>
+                            <input type="number" class="form-control" id="lengthFt" placeholder="Enter length in feet" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="material">Conductor Material:</label>
+                            <select class="form-control" id="material">
+                                <option value="CU">Copper (Cu)</option>
+                                <option value="AL">Aluminum (Al)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="insulation">Insulation Type:</label>
+                            <select class="form-control" id="insulation">
+                                <option value="THHN">THHN/THWN</option>
+                                <option value="XHHW">XHHW/XHHW-2</option>
+                                <option value="RHH">RHH/RHW-2</option>
+                                <option value="USE">USE-2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="terminalsC">Terminal Rating (°C):</label>
+                            <input type="number" class="form-control" id="terminalsC" placeholder="Enter terminal rating" value="75">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                        <button type="button" id="cableCalcReset" class="btn btn-secondary">Reset</button>
+                    </form>
+                    <div id="cableCalcResults" class="results-container"></div>
+                </section>
+
+                <!-- Conduit Fill Calculator -->
+                <section class="calculator-section">
+                    <h2>Conduit Fill Calculator</h2>
+                    <form id="conduitFillForm">
+                        <div class="form-group">
+                            <label for="conduitFillType">Conduit Type:</label>
+                            <select class="form-control" id="conduitFillType">
+                                <option value="EMT">EMT</option>
+                                <option value="PVC">PVC</option>
+                                <option value="RMC">RMC</option>
+                            </select>
+                        </div>
+                        <div id="conductorEntries">
+                            <!-- Conductor rows will be added here -->
+                            <div class="conductor-row">
+                                <div class="form-group">
+                                    <label>Conductor Size:</label>
+                                    <select class="form-control" name="conductorSize_0">
+                                        <option value="14 AWG">14 AWG</option>
+                                        <option value="12 AWG">12 AWG</option>
+                                        <option value="10 AWG">10 AWG</option>
+                                        <option value="8 AWG">8 AWG</option>
+                                        <option value="6 AWG">6 AWG</option>
+                                        <option value="4 AWG">4 AWG</option>
+                                        <option value="2 AWG">2 AWG</option>
+                                        <option value="1 AWG">1 AWG</option>
+                                        <option value="1/0 AWG">1/0 AWG</option>
+                                        <option value="2/0 AWG">2/0 AWG</option>
+                                        <option value="3/0 AWG">3/0 AWG</option>
+                                        <option value="4/0 AWG">4/0 AWG</option>
+                                        <option value="250 kcmil">250 kcmil</option>
+                                        <option value="300 kcmil">300 kcmil</option>
+                                        <option value="350 kcmil">350 kcmil</option>
+                                        <option value="400 kcmil">400 kcmil</option>
+                                        <option value="500 kcmil">500 kcmil</option>
+                                        <option value="600 kcmil">600 kcmil</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Insulation:</label>
+                                    <select class="form-control" name="insolation_0">
+                                        <option value="THHN">THHN/THWN</option>
+                                        <option value="XHHW">XHHW/XHHW-2</option>
+                                        <option value="RHH">RHH/RHW-2</option>
+                                        <option value="USE">USE-2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantity:</label>
+                                    <input type="number" class="form-control" name="count_0" value="1" min="1">
+                                </div>
+                                <button type="button" class="btn btn-danger remove-conductor">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" id="addConductor" class="btn btn-primary">Add Conductor</button>
+                        <button type="submit" class="btn btn-primary">Calculate Fill</button>
+                        <button type="button" id="conduitFillReset" class="btn btn-secondary">Reset</button>
+                    </form>
+                    <div id="conduitFillResults" class="results-container"></div>
+                </section>
+
+                <!-- Voltage Drop Calculator -->
+                <section class="calculator-section">
+                    <h2>Voltage Drop Calculator</h2>
+                    <form id="voltageDropForm">
+                        <div class="form-group">
+                            <label for="vdVoltage">Voltage (V):</label>
+                            <input type="number" class="form-control" id="vdVoltage" placeholder="Enter voltage" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdLength">Length (ft):</label>
+                            <input type="number" class="form-control" id="vdLength" placeholder="Enter length in feet" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdAmps">Current (Amps):</label>
+                            <input type="number" class="form-control" id="vdAmps" placeholder="Enter current in amps" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdPhase">Phase:</label>
+                            <select class="form-control" id="vdPhase">
+                                <option value="1P">Single Phase (1P)</option>
+                                <option value="3P">Three Phase (3P)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdMaterial">Conductor Material:</label>
+                            <select class="form-control" id="vdMaterial">
+                                <option value="CU">Copper (Cu)</option>
+                                <option value="AL">Aluminum (Al)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdWireSize">Wire Size:</label>
+                            <select class="form-control" id="vdWireSize">
+                                <option value="14 AWG">14 AWG</option>
+                                <option value="12 AWG">12 AWG</option>
+                                <option value="10 AWG">10 AWG</option>
+                                <option value="8 AWG">8 AWG</option>
+                                <option value="6 AWG">6 AWG</option>
+                                <option value="4 AWG">4 AWG</option>
+                                <option value="2 AWG">2 AWG</option>
+                                <option value="1 AWG">1 AWG</option>
+                                <option value="1/0 AWG">1/0 AWG</option>
+                                <option value="2/0 AWG">2/0 AWG</option>
+                                <option value="3/0 AWG">3/0 AWG</option>
+                                <option value="4/0 AWG">4/0 AWG</option>
+                                <option value="250 kcmil">250 kcmil</option>
+                                <option value="300 kcmil">300 kcmil</option>
+                                <option value="350 kcmil">350 kcmil</option>
+                                <option value="400 kcmil">400 kcmil</option>
+                                <option value="500 kcmil">500 kcmil</option>
+                                <option value="600 kcmil">600 kcmil</option>
+                                <option value="700 kcmil">700 kcmil</option>
+                                <option value="750 kcmil">750 kcmil</option>
+                                <option value="800 kcmil">800 kcmil</option>
+                                <option value="900 kcmil">900 kcmil</option>
+                                <option value="1000 kcmil">1000 kcmil</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vdConduit">Conduit Type:</label>
+                            <select class="form-control" id="vdConduit">
+                                <option value="EMT">EMT</option>
+                                <option value="PVC">PVC</option>
+                                <option value="RMC">RMC</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Calculate Voltage Drop</button>
+                        <button type="button" id="voltageDropReset" class="btn btn-secondary">Reset</button>
+                    </form>
+                    <div id="voltageDropResults" class="results-container"></div>
+                </section>
+            </div>
         </div>
 
         <!-- Template Downloads (visible on all scales) -->
