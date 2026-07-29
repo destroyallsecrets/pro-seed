@@ -10,10 +10,10 @@
     const AppState = {
         currentScale: 'residential',
         scales: ['residential', 'commercial', 'industrial', 'powerscaling', 'calculators'],
-        phaseTabs: {},
-        checklists: {},
-        notes: {},
-        progress: {}
+        phaseTabs: {}, // scale -> { phaseId -> tabElement }
+        checklists: {}, // scale -> { itemId -> boolean }
+        notes: {}, // scale -> { itemId -> string }
+        progress: {} // scale -> { phaseId -> boolean } or similar
     };
 
     // Scale data references (loaded via script tags)
@@ -119,8 +119,28 @@
 
         if (!data.phases) return;
 
-        const tabsContainer = elements.phaseTabs[scale];
-        const panelsContainer = elements.phasePanels[scale];
+        // Get or create tabs and panels containers
+        let tabsContainer = elements.phaseTabs[scale];
+        let panelsContainer = elements.phasePanels[scale];
+        const scaleContent = elements.scaleContents[scale];
+
+        if (!tabsContainer || !panelsContainer) {
+            // Create containers if they don't exist
+            tabsContainer = document.createElement('div');
+            tabsContainer.id = `${scale}Tabs`;
+            tabsContainer.className = 'phase-tabs';
+            panelsContainer = document.createElement('div');
+            panelsContainer.id = `${scale}Panels`;
+            panelsContainer.className = 'phase-panels';
+            // Clear the scale content and append the containers
+            // Note: for these scales, we expect the content to be empty initially
+            scaleContent.innerHTML = '';
+            scaleContent.appendChild(tabsContainer);
+            scaleContent.appendChild(panelsContainer);
+            // Update the elements references
+            elements.phaseTabs[scale] = tabsContainer;
+            elements.phasePanels[scale] = panelsContainer;
+        }
 
         // Initialize state containers
         AppState.phaseTabs[scale] = {};
