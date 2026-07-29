@@ -13,7 +13,8 @@
         phaseTabs: {}, // scale -> { phaseId -> tabElement }
         checklists: {}, // scale -> { itemId -> boolean }
         notes: {}, // scale -> { itemId -> string }
-        progress: {} // scale -> { phaseId -> boolean } or similar
+        progress: {}, // scale -> { phaseId -> boolean } or similar
+        calculatorsInitialized: false
     };
 
     // Scale data references (loaded via script tags)
@@ -61,6 +62,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadProgress();
         initializeAllScales();
+        // Add click handlers to scale buttons
+        document.querySelectorAll('.scale-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchScale(btn.dataset.scale);
+            });
+        });
         switchScale('residential');
         updateProgress();
     });
@@ -85,9 +92,16 @@
         AppState.currentScale = scale;
         updateProgress();
 
-        // Initialize calculators if switching to calculators scale
-        if (scale === 'calculators') {
-            window.initCalculators && window.initCalculators();
+        // Initialize calculators if switching to calculators scale and not already initialized
+        if (scale === 'calculators' && !AppState.calculatorsInitialized) {
+            if (window.initCableCalculator && window.initConduitFillCalculator && window.initVoltageDropCalculator) {
+                window.initCableCalculator();
+                window.initConduitFillCalculator();
+                window.initVoltageDropCalculator();
+                AppState.calculatorsInitialized = true;
+            } else {
+                console.warn('Calculator initialization functions not found');
+            }
         }
 
         // Focus first incomplete phase (skip calculators as it has no phases)
