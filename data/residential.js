@@ -1,14 +1,13 @@
 // Residential Scale Data - Complete Step-by-Step Installation Guide
 // Covers: Single-family, duplex, small multi-family (up to 4 units)
 // NEC 2023 Primary Articles: 210, 220, 230, 240, 250, 310, 314, 406, 408, 410, 334, 320, 338, 410, 422, 334, 320, 338, 410, 422
-
+console.log('residential.js loading');
 const residentialData = {
     scale: 'residential',
     label: 'Residential',
     icon: '🏠',
     description: 'Single-family, duplex, small multi-family (up to 4 units)',
     serviceTypical: '120/240V, 100-200A, 1Ø3W',
-    
     // Equipment Specifications with Sizes
     equipmentSpecs: {
         serviceEntrance: {
@@ -50,7 +49,6 @@ const residentialData = {
             '4"': { emt: 14.75, pvc40: 5.900, rmc: 14.75, pvc80: 5.239 }
         }
     },
-    
     // Manpower Estimates (hours per task)
     manpowerEstimates: {
         permitAcquisition: { jm: 2, ap: 1 },
@@ -63,7 +61,6 @@ const residentialData = {
         inspectionCoord: { jm: 2, ap: 1 },
         documentation: { jm: 3, ap: 2 }
     },
-
     phases: [
         {
             id: 'preSite',
@@ -561,10 +558,9 @@ const residentialData = {
         }
     ]
 };
-
+console.log('residential.js loaded, residentialData set:', !!window.residentialData);
 // Export for browser
 window.residentialData = residentialData;
-
 // Export for Node/CommonJS
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = residentialData;
