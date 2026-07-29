@@ -1,4 +1,4 @@
-// Industrial Scale Data - Electrical Installation Analysis
+// Industrial Scale Data - Complete Step-by-Step Installation Guide
 // Covers: Manufacturing, heavy industrial, utility substations, large campus (>100k sq ft)
 // NEC 2023 + IEEE Standards: 141, 242, 399, 446, 519, 1584, 3007, NFPA 70E, 70B, 110
 
@@ -8,430 +8,725 @@ const industrialData = {
     icon: '🏭',
     description: 'Manufacturing, heavy industrial, utility substations, large campus (>100k sq ft)',
     serviceTypical: '4.16kV-13.8kV primary, 480V secondary, 2000-10000A+, 3Ø3W/4W',
+    
+    // Equipment Specifications with Sizes
+    equipmentSpecs: {
+        primaryService: {
+            incomingLines: { 
+                type: 'Overhead/underground', 
+                voltage: '4.16kV-13.8kV', 
+                conductor: 'ACSR/AAC per utility', 
+                size: 'Per fault current & ampacity' 
+            },
+            primarySwitchgear: { 
+                type: 'Metal-clad, drawout', 
+                voltage: '4.16kV-13.8kV', 
+                continuous: '1200-4000A', 
+                interrupting: '25kA-63kA sym', 
+                standard: 'IEEE C37.20.2' 
+            },
+            powerTransformers: { 
+                type: 'OA/FA/FOA', 
+                voltage: '4.16kV-13.8kV Δ / 480Y/277V', 
+                kva: ['1000','1500','2000','2500','3000','4000','5000'], 
+                impedance: '5.5%-7.5%', 
+                standard: 'IEEE C57.12.00' 
+            },
+            secondarySwitchgear: { 
+                type: 'Metal-enclosed, drawout', 
+                voltage: '480V', 
+                continuous: '2000-6000A', 
+                interrupting: '65kA-100kA sym', 
+                standard: 'IEEE C37.20.1' 
+            },
+            motorControlCenters: { 
+                type: 'NEMA Class II, Type B', 
+                voltage: '480V', 
+                buckets: '0-54 per section', 
+                standard: 'NEMA ICS 3' 
+            }
+        },
+        
+        distribution: {
+            feeders: { 
+                voltage: '480V', 
+                conductor: 'CU/AL per ampacity (Table 310.16)', 
+                conduit: 'RMC/IMC/PVC80', 
+                grounding: 'EGC per 250.122' 
+            },
+            transformers: { 
+                type: 'Dry-type, ventilated', 
+                voltage: '480-208Y/120V', 
+                kva: ['75','112.5','150','225','300','500','750'], 
+                standard: 'UL 1561' 
+            },
+            panelboards: { 
+                voltage: '208Y/120V', 
+                type: '42-circuit, bolt-on', 
+                standard: 'UL 67', 
+                sizes: ['225A','400A','600A'] 
+            }
+        },
+        
+        branchCircuits: {
+            motors: { 
+                voltage: '480V 3Ø', 
+                awg: 'per FLA (Table 430.250)', 
+                breaker: 'per 430.52 (250% max for inverse time)', 
+                conduit: 'EMT/RMC', 
+                overload: 'per 430.32 (115%-125%)' 
+            },
+            vfd: { 
+                voltage: '480V', 
+                awg: 'per FLA', 
+                conduit: 'EMT w/ shielded cable', 
+                filter: 'line/load reactor (3%-5%)', 
+                grounding: 'per 250.118' 
+            },
+            lighting: { 
+                voltage: '277V or 120V', 
+                awg: '12 THHN/THWN', 
+                conduit: '3/4" EMT', 
+                load: 'Per fixture' 
+            },
+            receptacles: { 
+                awg: '12 THHN/THWN', 
+                breaker: '20A 1P GFCI', 
+                conduit: '3/4" EMT', 
+                load: '180VA/strap' 
+            }
+        },
+        
+        grounding: {
+            groundRod: { 
+                type: '3/4" x 10ft copper-clad', 
+                standard: 'UL 467', 
+                qty: 'per 250.53 (2 rods min, 6ft apart)' 
+            },
+            gec: { 
+                awg: 'per Table 250.66 (based on largest service conductor)', 
+                material: 'Cu', 
+                location: 'Service entrance' 
+            },
+            mainBondingJumper: { 
+                awg: 'per Table 250.28 (based on largest service conductor)', 
+                location: 'Service equipment' 
+            },
+            equipmentGrounding: { 
+                awg: 'per 250.122 (based on overcurrent device rating)', 
+                type: 'EGC with feeders', 
+                continuity: 'Verified' 
+            },
+            groundingGrid: { 
+                conductor: '4/0 AWG bare copper', 
+                spacing: '20ft grid', 
+                depth: '2.5ft bury', 
+                standard: 'IEEE 80' 
+            }
+        }
+    },
+    
+    manpowerEstimates: {
+        engineeringStudy: { jm: 0, ap: 0, pe: 80, et: 120 }, // per 1MVA
+        utilityCoordination: { jm: 8, ap: 4, pm: 2 },
+        civilWork: { jm: 40, ap: 20, op: 20, cem: 10 }, // per 1000 sq ft substation
+        switchgearInstall: { jm: 24, ap: 12, rigger: 8, crane: 16 },
+        transformerInstall: { jm: 16, ap: 8, rigger: 8, crane: 24, oil: 8 },
+        cablePull: { jm: 32, ap: 32, helper: 16 }, // per 1000 ft
+        termination: { jm: 8, ap: 4 }, // per termination
+        deviceInstall: { jm: 20, ap: 20 },
+        panelBuild: { jm: 16, ap: 8 },
+        mccInstall: { jm: 20, ap: 10 },
+        testing: { jm: 16, ap: 8, net: 24 },
+        commissioning: { jm: 24, ap: 12, cx: 16, net: 8 },
+        documentation: { jm: 12, ap: 6, pm: 6 }
+    },
+
     phases: [
         {
-            id: 'preSite',
+            id: 'engineering',
             number: 1,
-            title: 'Pre-Site: Engineering & Studies',
+            title: 'Phase 1: Engineering Studies & Design',
             icon: '📐',
             color: 'blue',
-            description: 'Utility interconnection, protection coordination, arc flash, harmonic studies',
-            cards: [
+            description: 'Utility interconnection, load flow, short circuit, coordination, arc flash, harmonic studies',
+            estimatedHours: { jm: 0, ap: 0, pe: 120, et: 180 }, // per 1MVA
+            steps: [
                 {
-                    id: 'utilityInterconnect',
-                    title: 'Utility Interconnection Agreement',
-                    icon: '🤝',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Execute interconnection agreement with utility', ref: 'IEEE 1547, Utility req' },
-                        { text: 'Confirm POI (Point of Interconnection) voltage & fault current', ref: '' },
-                        { text: 'Define protection requirements: transfer trip, DTT, UPF', ref: 'IEEE C37.112' },
-                        { text: 'Coordinate grounding: utility vs facility (separate/joined)', ref: 'IEEE 142, 80' },
-                        { text: 'Define metering: primary/secondary, CT/PT ratios, accuracy class', ref: 'IEEE C57.13' },
-                        { text: 'Establish outage coordination procedures', ref: '' }
-                    ]
+                    order: 1,
+                    title: '1.1 Utility Interconnection Study',
+                    type: 'engineering',
+                    duration: { pe: 20, et: 30 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Utility data request', 'Interconnection application'],
+                    tools: ['ETAP/SKM', 'Utility fault current data', 'One-line diagram software'],
+                    instructions: [
+                        'Submit interconnection application to utility',
+                        'Obtain Point of Interconnection (POI) voltage and available fault current',
+                        'Determine required protective relaying (transfer trip, DTT, PUTT)',
+                        'Establish metering requirements (primary vs secondary, CT/PT ratios)',
+                        'Define grounding interface (separate grids, decoupling transformers)',
+                        'Coordinate outage scheduling and switching procedures'
+                    ],
+                    verification: 'Interconnection agreement executed, POI characteristics documented',
+                    codeRefs: ['IEEE 1547', 'IEEE 1547.1', 'NEC 110.24', 'Utility interconnection standards']
                 },
                 {
-                    id: 'systemStudies',
-                    title: 'Power System Studies (Pre-Construction)',
-                    icon: '📊',
-                    iconColor: 'purple',
-                    checklist: [
-                        { text: 'Load flow study: voltage regulation, losses, PF correction', ref: 'IEEE 141, 242' },
-                        { text: 'Short circuit study: ANSI/IEEE methods, duties at all buses', ref: 'ANSI C37.010, IEEE 399' },
-                        { text: 'Protection coordination: TCC curves, selective coordination', ref: 'IEEE 242, 399, NEC 240.12, 700.32' },
-                        { text: 'Arc flash hazard analysis: IEEE 1584, NFPA 70E labels', ref: 'IEEE 1584, NFPA 70E' },
-                        { text: 'Harmonic analysis: IEEE 519 limits, filter design if needed', ref: 'IEEE 519' },
-                        { text: 'Motor starting study: voltage dip, torque, acceleration time', ref: 'IEEE 399' },
-                        { text: 'Transient stability: large motors, gensets, utility switching', ref: 'IEEE 1159' },
-                        { text: 'Grounding study: IEEE 80 (substation), touch/step potentials', ref: 'IEEE 80, 142' }
-                    ]
+                    order: 2,
+                    title: '1.2 Load Flow & Voltage Regulation Study',
+                    type: 'engineering',
+                    duration: { pe: 25, et: 40 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Load schedules', 'Motor starting data', 'Transformer data'],
+                    tools: ['ETAP/SKM/PowerWorld', 'Load flow software'],
+                    instructions: [
+                        'Build system model: all buses, lines, transformers, loads, generators',
+                        'Input all load data: continuous, intermittent, motor starting',
+                        'Run base case load flow: verify voltages within ±5% ANSI C84.1',
+                        'Run contingency analysis (N-1): check for overloads/voltage violations',
+                        'Determine capacitor bank sizing for power factor correction (>0.95 lag)',
+                        'Calculate voltage regulation: ensure <3% variance at utilization equipment'
+                    ],
+                    verification: 'Load flow converged, voltages within limits, PF correction calculated',
+                    codeRefs: ['IEEE 141', 'IEEE 242', 'ANSI C84.1', 'NEC 220', 'IEEE 18']
                 },
                 {
-                    id: 'equipmentSpecs',
-                    title: 'Major Equipment Specifications',
-                    icon: '📋',
-                    iconColor: 'yellow',
-                    checklist: [
-                        { text: 'Primary switchgear: metal-clad, drawout, ratings, AIC', ref: 'IEEE C37.20.2' },
-                        { text: 'Power transformers: impedance, taps, cooling, loading', ref: 'IEEE C57.12' },
-                        { text: 'Secondary switchgear/switchboards: construction, bus rating', ref: 'IEEE C37.20.1' },
-                        { text: 'MCCs: NEMA Class, type, starter types, VFD integration', ref: 'NEMA ICS 3, NEC 430' },
-                        { text: 'Generators: kW, PF, subtransient reactance, governor/AVR', ref: 'NFPA 110, NEC 445' },
-                        { text: 'UPS: topology, battery runtime, bypass, harmonic profile', ref: 'NEC 645, 700' },
-                        { text: 'Capacitor banks: fixed/switched, detuning reactors', ref: 'IEEE 18, NEC 460' },
-                        { text: 'Harmonic filters: passive/active, tuning, ratings', ref: 'IEEE 519' }
-                    ]
+                    order: 3,
+                    title: '1.3 Short Circuit Study',
+                    type: 'engineering',
+                    duration: { pe: 20, et: 30 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Component impedance data', 'Cable/raceway schedules'],
+                    tools: ['ETAP/SKM', 'Fault current calculator'],
+                    instructions: [
+                        'Model all impedance sources: utility, transformers, reactors, cables, motors',
+                        'Apply ANSI/IEEE methods: Thevenin equivalent at each bus',
+                        'Calculate symmetrical short circuit current (3Ø, LG, LL, LLG)',
+                        'Include motor contribution: subtract transient contribution per ANSI C37.010',
+                        'Compare to equipment ratings: check interrupting, closing, latching capabilities',
+                        'Document X/R ratio at each bus for asymmetric duty calculation'
+                    ],
+                    verification: 'All equipment rated ≥ available fault current, X/R ratios documented',
+                    codeRefs: ['IEEE 399', 'ANSI C37.010', 'NEC 110.24', 'NEC 110.9', 'NEC 110.10']
+                },
+                {
+                    order: 4,
+                    title: '1.4 Protection Coordination Study',
+                    type: 'engineering',
+                    duration: { pe: 25, et: 40 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Relay curves', 'Breaker time-current data', 'Fuse curves'],
+                    tools: ['ETAP/SKM', 'TCC plotter', 'Relay test set'],
+                    instructions: [
+                        'Collect time-current curves for all protective devices',
+                        'Plot TCC on log-log scale: upstream must be below downstream',
+                        'Verify selective coordination: no overlap between upstream/downstream curves',
+                        'Check zone selectivity: ensure faults cleared by closest upstream device',
+                        'Verify NEC 700/701/708 selective coordination for emergency systems',
+                        'Document pickup, time delay, curve type for each device'
+                    ],
+                    verification: 'TCC curves show proper coordination, selective coordination verified',
+                    codeRefs: ['IEEE 242', 'NEC 240.12', 'NEC 700.32', 'NEC 701.27', 'NEC 702', 'NEC 708.54']
+                },
+                {
+                    order: 5,
+                    title: '1.5 Arc Flash Hazard Analysis',
+                    type: 'engineering',
+                    duration: { pe: 20, et: 30 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Short circuit results', 'Protection settings', 'Equipment data'],
+                    tools: ['ETAP/SKM', 'Arc flash calculator (IEEE 1584-2018)'],
+                    instructions: [
+                        'Use short circuit study results: bolted fault current and X/R ratio',
+                        'Determine arc duration: based on protective device clearing time',
+                        'Select electrode configuration: VCB, VCBB, HCB, VOA per equipment type',
+                        'Calculate incident energy: IEEE 1584-2018 equations (125V-15kV)',
+                        'Determine arc flash boundary: where incident energy = 1.2 cal/cm²',
+                        'Assign PPE category: per NFPA 70E Table 130.7(C)(15)(a) or (b)',
+                        'Generate arc flash labels: incident energy, boundary, PPE, shock boundaries'
+                    ],
+                    verification: 'Incident energy calculated, labels generated, PPE specified',
+                    codeRefs: ['IEEE 1584-2018', 'NFPA 70E', 'NEC 110.16', 'NFPA 70E 130.5(H)']
+                },
+                {
+                    order: 6,
+                    title: '1.6 Harmonic Analysis',
+                    type: 'engineering',
+                    duration: { pe: 15, et: 25 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Non-linear load inventory', 'Capacitor bank data'],
+                    tools: ['ETAP/SKM', 'Harmonic analysis software'],
+                    instructions: [
+                        'Identify all non-linear loads: VFDs, UPS, LED drives, rectifiers, arc furnaces',
+                        'Calculate harmonic currents: fundamental magnitude × THD/% harmonics',
+                        'Model system impedance: include source, transformers, cables, reactors',
+                        'Perform frequency scan: identify parallel/series resonance frequencies',
+                        'Calculate voltage/current THD at PCC: compare to IEEE 519 limits',
+                        'Design filters if needed: passive (tuned) or active to meet THD<5%/TDD<8%'
+                    ],
+                    verification: 'THD/TDD within IEEE 519 limits, filtering solution designed if needed',
+                    codeRefs: ['IEEE 519', 'IEEE 141', 'IEEE 242', 'NEC 110.24']
+                },
+                {
+                    order: 7,
+                    title: '1.7 Grounding Study',
+                    type: 'engineering',
+                    duration: { pe: 15, et: 20 },
+                    crew: { pe: 1, et: 2 },
+                    materials: ['Soil resistivity data', 'Grid layout', 'Fault current data'],
+                    tools: ['SES/CDEGS', 'Ground grid design software'],
+                    instructions: [
+                        'Measure soil resistivity: Wenner 4-point method at multiple locations/depths',
+                        'Design grounding grid: calculate mesh and step voltages per IEEE 80',
+                        'Determine grid conductor size: based on fault current and duration',
+                        'Calculate ground potential rise (GPR): I_fault × R_grid',
+                        'Verify touch/step voltages < safety thresholds: 150V (50kg), 1000V (70kg) per IEEE 80',
+                        'Design ground rods, wells, or chemical rods if native soil insufficient'
+                    ],
+                    verification: 'Grid design verified, touch/step voltages within limits, GPR calculated',
+                    codeRefs: ['IEEE 80', 'IEEE 81', 'NEC 250', 'IEEE 142']
                 }
+            ],
+            deliverables: [
+                'Interconnection agreement with utility',
+                'Load flow study report with voltage profiles',
+                'Short circuit study report with equipment duties',
+                'Protection coordination study with TCC curves',
+                'Arc flash hazard analysis report with labels',
+                'Harmonic analysis report with filter recommendations',
+                'Grounding study report with grid design',
+                'Complete electrical specifications package'
             ]
         },
         {
-            id: 'siteSurvey',
+            id: 'siteWork',
             number: 2,
-            title: 'Site Survey: Substation & Distribution',
+            title: 'Phase 2: Site Work & Civil Construction',
             icon: '🏗️',
             color: 'yellow',
-            description: 'Substations, MV switchgear, transformers, LV switchgear, MCCs',
-            cards: [
+            description: 'Foundations, conduits, grounding, cable trays, structural work',
+            estimatedHours: { jm: 80, ap: 40, op: 60, cem: 30 }, // per 1000 sq ft
+            steps: [
                 {
-                    id: 'primarySub',
-                    title: 'Primary Substation (MV)',
-                    icon: '⚡',
-                    iconColor: 'yellow',
-                    checklist: [
-                        { text: 'Incoming line: overhead/underground, terminations, arresters', ref: 'IEEE C62.11' },
-                        { text: 'Primary switchgear: construction, interlocks, SCADA integration', ref: 'IEEE C37.20.2' },
-                        { text: 'Protective relays: 50/51, 51N, 27/59, 81, 87T, 87B', ref: 'IEEE C37.90' },
-                        { text: 'Verify relay settings match coordination study', ref: '' },
-                        { text: 'Check CT/PT accuracy class, ratio, burden', ref: 'IEEE C57.13' },
-                        { text: 'Transformer: DGA history, tap position, cooling, neutral grounding', ref: 'IEEE C57.12' },
-                        { text: 'Grounding: station grid, main ground bus, equipment bonds', ref: 'IEEE 80' },
-                        { text: 'DC system: battery, charger, distribution, monitoring', ref: 'IEEE 450, 1188' },
-                        { text: 'Fire protection: deluge, CO2, detection', ref: 'NFPA 15, 850' },
-                        { text: 'Security: fencing, cameras, access control', ref: 'NERC CIP' }
-                    ]
+                    order: 1,
+                    title: '2.1 Soil Preparation & Foundation Work',
+                    type: 'civil',
+                    duration: { jm: 16, op: 24, cem: 8 },
+                    crew: { jm: 2, op: 3, cem: 1 },
+                    materials: ['Concrete', 'Rebar', 'Forms', 'Gravel base', 'Waterproofing'],
+                    tools: ['Excavator', 'Concrete mixer', 'Vibrator', 'Laser level'],
+                    instructions: [
+                        'Excavate to required depth: below frost line, adequate bearing capacity',
+                        'Place and compact gravel base: 6\" min, 95% compaction',
+                        'Build forms for equipment pads, conduit trenches, ground rod wells',
+                        'Place reinforcement: #4 rebar @ 12\" oc each way, hook at corners',
+                        'Pour concrete: 3000 psi min, vibrate to eliminate voids',
+                        'Cure concrete: keep moist 7 days, achieve design strength',
+                        'Install anchor bolts: set to template, verify projection and alignment'
+                    ],
+                    verification: 'Dimensions correct, concrete cured, anchor bolts plumb and secure',
+                    codeRefs: ['ACI 318', 'IEEE 80', 'NEC 110.26', 'Local building code']
                 },
                 {
-                    id: 'mvSwitchgear',
-                    title: 'MV Switchgear (4.16kV - 13.8kV)',
-                    icon: '🔌',
-                    iconColor: 'red',
-                    checklist: [
-                        { text: 'Breaker type: vacuum, SF6, air-magnetic', ref: 'IEEE C37.04' },
-                        { text: 'Continuous current, interrupting rating, short-time rating', ref: 'IEEE C37.010' },
-                        { text: 'Protective relay scheme: differential, overcurrent, bus', ref: '' },
-                        { text: 'Breaker testing: timing, contact resistance, insulation', ref: 'IEEE C37.09' },
-                        { text: 'Interlocks: mechanical, electrical, key exchange', ref: '' },
-                        { text: 'Bus insulation: Hi-pot, IR, partial discharge', ref: 'IEEE C37.20.2' },
-                        { text: 'Arc-resistant construction (Type 1/2/2B/2C)', ref: 'IEEE C37.20.7' }
-                    ]
+                    order: 2,
+                    title: '2.2 Grounding System Installation',
+                    type: 'electrical',
+                    duration: { jm: 24, ap: 12 },
+                    crew: { jm: 3, ap: 2 },
+                    materials: ['Bare copper cable (4/0 AWG)', 'Ground rods (3/4\"x10\")', 'Exothermic welds', 'Ground wells'],
+                    tools: ['Post hole digger', 'Sledge hammer', 'Exothermic weld kit', 'Torque wrench'],
+                    instructions: [
+                        'Install ground rods: 8\' deep, spaced 2x rod length apart (minimum 6\")',
+                        'Drive rods to full depth: use mechanical driver or hand sled',
+                        'Lay ground grid: bury bare copper conductor at designed depth',
+                        'Make exothermic welds: at all crossings and connections to rods/electrodes',
+                        'Test weld integrity: visual inspection + mechanical pull test (min 500 lbs)',
+                        'Connect to equipment: exothermic weld or listed lug to ground pad/bus',
+                        'Measure ground resistance: fall-of-potential method per IEEE 81'
+                    ],
+                    verification: 'Ground resistance <25 ohms (or per spec), all connections exothermic welded',
+                    codeRefs: ['IEEE 80', 'IEEE 81', 'NEC 250.52', 'NEC 250.53', 'NEC 250.68(A)']
                 },
                 {
-                    id: 'transformers',
-                    title: 'Power Transformers',
-                    icon: '🔄',
-                    iconColor: 'green',
-                    checklist: [
-                        { text: 'Nameplate: MVA, impedance, taps, cooling class (ONAN/ONAF/OFAF)', ref: 'IEEE C57.12' },
-                        { text: 'DGA (Dissolved Gas Analysis) - trend review', ref: 'IEEE C57.104' },
-                        { text: 'Oil quality: dielectric, moisture, acids, furans', ref: 'ASTM D1816' },
-                        { text: 'Bushing condition: C1/C2, power factor, hot collar', ref: 'IEEE C57.19' },
-                        { text: 'OLTC (On-Load Tap Changer): operation count, oil analysis', ref: 'IEEE C57.131' },
-                        { text: 'Neutral grounding: solid, resistance, reactor, Petersen coil', ref: 'IEEE 142, 399' },
-                        { text: 'Sudden pressure relay, Buchholz, temperature monitors', ref: '' },
-                        { text: 'Fire protection: spray, containment, separation', ref: 'NFPA 850' }
-                    ]
+                    order: 3,
+                    title: '2.3 Conduit & Raceway Installation',
+                    type: 'electrical',
+                    duration: { jm: 40, ap: 20 },
+                    crew: { jm: 4, ap: 2 },
+                    materials: ['RMC/IMC conduit', 'PVC conduit', 'Cable tray', 'Supports/hangers', 'Pull boxes'],
+                    tools: ['Conduit bender', 'Threader', 'Hacksaw', 'Level', 'Measuring tape'],
+                    instructions: [
+                        'Install conduit supports: per NEC 344.30(B) (10\' max for RMC, 3\' within box)',
+                        'Maintain burial depth: 24\" min for direct burial, 18\" under concrete',
+                        'Keep conduit fill ≤40% for >2 conductors, ≤31% for 2 conductors, ≤53% for 1',
+                        'Provide expansion fittings: every 100ft max, or where crossing building expansion joints',
+                        'Seal conduit penetrations: fire caulk for fire-rated walls, duct seal for moisture',
+                        'Install pull boxes: every 100ft max or where bends exceed 360°, size diam. * 6',
+                        'Ground metal conduit: at both ends and every 25ft with bonding jumper'
+                    ],
+                    verification: 'Conduit secure, burial depth correct, fill % within limits, grounding continuous',
+                    codeRefs: ['NEC 300.5', '300.22', '344.30', '352.30', '358.30', '376.22', '300.15', '250.118']
                 },
                 {
-                    id: 'lvDistribution',
-                    title: 'LV Distribution (480V/600V)',
-                    icon: '📦',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Switchgear/switchboard: construction, arc-resistant, bus rating', ref: 'IEEE C37.20.1' },
-                        { text: 'Breakers: drawout, electronic trips (LSIG), maintenance', ref: 'IEEE C37.13' },
-                        { text: 'Protective relays: 50/51, 50N/51N, 46, 49, 86, 87', ref: '' },
-                        { text: 'Verify trip settings vs coordination study', ref: '' },
-                        { text: 'Check bus insulation, torque marks, IR scan history', ref: '' },
-                        { text: 'Ground fault protection: per NEC 230.95 (if >1000A)', ref: 'NEC 230.95' },
-                        { text: 'Arc flash labels: incident energy, boundary, PPE category', ref: 'NFPA 70E, NEC 110.16' }
-                    ]
-                },
-                {
-                    id: 'mccs',
-                    title: 'Motor Control Centers (MCCs)',
-                    icon: '🔧',
-                    iconColor: 'purple',
-                    checklist: [
-                        { text: 'NEMA Class I/II, Type A/B/C wiring', ref: 'NEMA ICS 3' },
-                        { text: 'Bucket inventory: FVNR, FVR, RVAT, VFD, soft start', ref: 'NEC 430' },
-                        { text: 'Overload protection: thermal, electronic, VFD-based', ref: 'NEC 430.32' },
-                        { text: 'VFD installations: line reactor, dv/dt filter, sine filter', ref: 'IEEE 519' },
-                        { text: 'Motor data: HP, FLA, SF, code letter, insulation class', ref: 'NEC 430.6' },
-                        { text: 'Verify disconnecting means at motor', ref: 'NEC 430.102' },
-                        { text: 'Grounding: bus, buckets, cable shields', ref: 'NEC 250.86, 250.96' },
-                        { text: 'Smart MCC: EtherNet/IP, DeviceNet, diagnostics', ref: '' }
-                    ]
+                    order: 4,
+                    title: '2.4 Cable Tray & Busway Installation',
+                    type: 'electrical',
+                    duration: { jm: 20, ap: 10 },
+                    crew: { jm: 2, ap: 1 },
+                    materials: ['Ladder/v-bottom tray', 'Busway sections', 'Hangars/supports', 'Barriers/dividers'],
+                    tools: ['Level', 'Torque wrench', 'Fish tape', 'Cable grips'],
+                    instructions: [
+                        'Install tray supports: per NEMA VE 2 (3\' max for steel, 5\' for aluminum)',
+                        'Maintain separation: power vs control (6\" min), power vs comm (12\" min)',
+                        'Provide dividers: where required by NEC 392.22(B) for different voltage systems',
+                        'Ensure grounding continuity: bond all sections with jumper per NEC 392.60(B)',
+                        'Allow for expansion: leave gaps per manufacturer (typically 1/4\" per 20ft)',
+                        'Secure cables: use straps/ties at intervals per NEC 392.30(B)(2)',
+                        'Maintain minimum radius: per cable manufacturer, not less than 12x diameter'
+                    ],
+                    verification: 'Tray level/square, supports per spec, separation maintained, grounding continuous',
+                    codeRefs: ['NEC 392', 'NEMA VE 1', 'NEMA VE 2', '300.3(C)(1)', '300.3(C)(2)']
                 }
+            ],
+            deliverables: [
+                'Completed foundations and equipment pads',
+                'Installed and tested grounding system',
+                'Rough-in conduit and raceway system',
+                'Installed cable tray and busway systems',
+                'As-built drawings of civil and underground work'
             ]
         },
         {
-            id: 'processLoads',
+            id: 'equipmentInstall',
             number: 3,
-            title: 'Process Loads & Special Systems',
-            icon: '🏭',
+            title: 'Phase 3: Equipment Installation',
+            icon: '🔧',
             color: 'purple',
-            description: 'Large motors, arc furnaces, VFDs, process heat, specialized equipment',
-            cards: [
+            description: 'Switchgear, transformers, motors, drives, MCCs, panels',
+            estimatedHours: { jm: 120, ap: 60, rigger: 40, crane: 60 }, // per major equipment set
+            steps: [
                 {
-                    id: 'largeMotors',
-                    title: 'Large Motors (>250 HP) & MV Motors',
-                    icon: '⚙️',
-                    iconColor: 'red',
-                    checklist: [
-                        { text: 'Starting method: DOL, RVAT, VFD, soft start, pony motor', ref: '' },
-                        { text: 'Motor starting study: voltage dip ≤15%, torque vs load', ref: 'IEEE 399' },
-                        { text: 'Protection: 87M, 46, 49, 50/51, 50N/51N, 27/59', ref: 'IEEE C37.96' },
-                        { text: 'RTD monitoring: stator, bearing, ambient', ref: '' },
-                        { text: 'Vibration monitoring: proximity probes, accelerometers', ref: 'API 670' },
-                        { text: 'Excitation system: brushless, static, brush-type', ref: '' },
-                        { text: 'Synchronizing: auto, manual, check sync (25)', ref: '' }
-                    ]
+                    order: 1,
+                    title: '3.1 Switchgear Assembly & Installation',
+                    type: 'electrical',
+                    duration: { jm: 24, ap: 12, rigger: 8, crane: 16 },
+                    crew: { jm: 3, ap: 2, rigger: 1, crane: 1 },
+                    materials: ['Switchgear sections', 'Bus bars', 'Insulators', 'Gaskets', 'Bolts'],
+                    tools: ['Torque wrench (calibrated)', 'Micrometer', 'Feeler gauges', 'Level', 'Crane'],
+                    instructions: [
+                        'Inspect for shipping damage: check exterior, interior, operate mechanisms',
+                        'Verify anchoring: install per manufacturer, check grout if required',
+                        'Assemble sections: align, bolt together per torque specifications',
+                        'Install bus connections: clean surfaces, apply inhibitor, torque to spec',
+                        'Check phase barriers: properly installed, no damage, correct spacing',
+                        'Verify interlock operation: mechanical and electrical between sections',
+                        'Anchoring to floor: per seismic zone, check gap under base frame'
+                    ],
+                    verification: 'Unit assembled, aligned, bolted to spec, interlocks functional, grounded',
+                    codeRefs: ['IEEE C37.20.2', 'NEC 110.26', 'IEEE 693', 'ASCE 7']
                 },
                 {
-                    id: 'arcFurnace',
-                    title: 'Arc Furnaces & Heavy Cyclic Loads',
-                    icon: '🔥',
-                    iconColor: 'red',
-                    checklist: [
-                        { text: 'Flicker analysis: Pst, Plt per IEEE 1453', ref: 'IEEE 1453, IEC 61000-4-15' },
-                        { text: 'Harmonic spectrum: odd/even, interharmonics', ref: 'IEEE 519' },
-                        { text: 'SVC/STATCOM: sizing, response time, control', ref: 'IEEE 1531' },
-                        { text: 'Transformer: special design (K-factor, impedance)', ref: 'IEEE C57.110' },
-                        { text: 'Electrode regulation: hydraulic, mechanical', ref: '' }
-                    ]
+                    order: 2,
+                    title: '3.2 Power Transformer Installation',
+                    type: 'electrical',
+                    duration: { jm: 16, ap: 8, rigger: 8, crane: 24, oil: 8 },
+                    crew: { jm: 2, ap: 1, rigger: 1, crane: 1, oil: 1 },
+                    materials: ['Transformer', 'Insulating oil', 'Gaskets', 'Thermometers', 'Pressure relief'],
+                    tools: ['Dial indicator', 'Megger (5kV+)', 'Oil test kit', 'Thermometer', 'Oil pump'],
+                    instructions: [
+                        'Inspect for damage: check tank, radiators, bushings, gauges, conservator',
+                        'Check oil level and quality: visual, dielectric strength if possible',
+                        'Position on pads: ensure level, check for soft spots, align with conduits',
+                        'Install bushings: torque to specification, check for cracks/contamination',
+                        'Fill with oil: degas if required, fill to correct level, bleed air',
+                        'Perform tests: ratio, polarity, excitation current, insulation resistance',
+                        'Check accessories: sudden pressure relay, Buchholz, temperature indicators'
+                    ],
+                    verification: 'Unit level, oil filled to correct level, all electrical tests passed',
+                    codeRefs: ['IEEE C57.12.00', 'NEC 450', 'IEEE C57.12.90', 'NFPA 70E']
                 },
                 {
-                    id: 'vfdHarmonics',
-                    title: 'VFD Systems & Harmonic Mitigation',
-                    icon: '📈',
-                    iconColor: 'yellow',
-                    checklist: [
-                        { text: 'VFD type: 6-pulse, 12-pulse, 18-pulse, AFE', ref: '' },
-                        { text: 'Input harmonic filter: passive, active, hybrid', ref: 'IEEE 519' },
-                        { text: 'Output filter: dv/dt, sine wave, common mode choke', ref: '' },
-                        { text: 'Motor cable: shielded, length limits, termination', ref: '' },
-                        { text: 'Grounding: VFD, motor, cable shield, building steel', ref: '' },
-                        { text: 'IEEE 519 compliance: TDD at PCC, individual harmonics', ref: 'IEEE 519' }
-                    ]
+                    order: 3,
+                    title: '3.3 Motor Control Center Installation',
+                    type: 'electrical',
+                    duration: { jm: 20, ap: 10 },
+                    crew: { jm: 3, ap: 2 },
+                    materials: ['MCC sections', 'Bucket units', 'Bus bars', 'Terminal blocks', 'Wiring'],
+                    tools: ['Torque wrench', 'Wire strippers', 'Crimp tool', 'Label maker', 'Phase rotation meter'],
+                    instructions: [
+                        'Inspect for damage: check exterior, interior, operate disconnects',
+                        'Verify anchoring: install per manufacturer, check if seismic restraints needed',
+                        'Assemble sections: join together, install bus ties, torque to specification',
+                        'Install bus connections: clean, inhibitor applied, torqued per spec',
+                        'Check vertical bus: properly insulated, supported, rated for fault current',
+                        'Install feed-through lugs: if required, torque to specification',
+                        'Ground MCC: connect ground bus to building ground per NEC 250.104(C)'
+                    ],
+                    verification: 'Sections joined, bus connected, grounding verified, all parts installed',
+                    codeRefs: ['NEMA ICS 3', 'NEC 430', 'NEC 110.26', 'NEC 250.104(C)']
                 },
                 {
-                    id: 'processHeat',
-                    title: 'Process Heating & Special Loads',
-                    icon: '🌡️',
-                    iconColor: 'red',
-                    checklist: [
-                        { text: 'Resistance heating: SCR control, power factor', ref: '' },
-                        { text: 'Induction heating: frequency, matching network', ref: '' },
-                        { text: 'Infrared/UV curing: lamp ratings, ballasts', ref: '' },
-                        { text: 'Electrolysis/galvanizing: DC rectifiers, ripple', ref: '' },
-                        { text: 'Welding machines: duty cycle, demand factors', ref: 'NEC 630' }
-                    ]
+                    order: 4,
+                    title: '3.4 Motor and Drive Installation',
+                    type: 'electrical',
+                    duration: { jm: 16, ap: 8 },
+                    crew: { jm: 2, ap: 2 },
+                    materials: ['Motors', 'VFDs', 'Conduit', 'Cable', 'Disconnects', 'Motor starters'],
+                    tools: ['Shaft alignment tools', 'Torque wrench', 'Megger', 'Clamp amp meter', 'Laser tach'],
+                    instructions: [
+                        'Check motor nameplate: verify voltage, phase, HP, RPM, frame, enclosure',
+                        'Align motor to driven equipment: laser alignment, soft foot check',
+                        'Mount motor: secure to base, check for resonance, isolate vibration if needed',
+                        'Install conduit and conductors: from disconnect to motor, per ampacity tables',
+                        'Connect leads: match motor terminals T1-T2-T3 to L1-L2-L3, maintain phase rotation',
+                        'Ground motor frame: install grounding lug, connect to EGC per NEC 250.110',
+                        'Install VFD: per manufacturer, maintain bending radius, shielded cable if required'
+                    ],
+                    verification: 'Motor aligned, mounted, connected, grounded, VFD installed per spec',
+                    codeRefs: ['NEC 430', 'NEC 110.26', 'IEEE 519', 'NEMA MG 1', 'UL 508A']
+                },
+                {
+                    order: 5,
+                    title: '3.5 Panelboard and Distribution Installation',
+                    type: 'electrical',
+                    duration: { jm: 12, ap: 6 },
+                    crew: { jm: 2, ap: 1 },
+                    materials: ['Panelboards', 'Breakers', 'Bus bars', 'Terminals', 'Wiring', 'Directories'],
+                    tools: ['Torque wrench', 'Wire strippers', 'Label maker', 'Circuit tracer', 'Voltage tester'],
+                    instructions: [
+                        'Mount securely: to wall or structure, level and plumb, per clearance requirements',
+                        'Install main bonding jumper: if service equipment, per NEC 250.24(B)',
+                        'Connect feeders: torque lugs to specification, maintain bending radius',
+                        'Install branch breakers: fully seated, proper type (HID, SWD, HACR as needed)',
+                        'Connect branch circuits: torque to specification, identify in directory',
+                        'Install directory: typed, mounted inside door, match actual circuit connections',
+                        'Ground panel: connect enclosure to ground bus per NEC 250.110'
+                    ],
+                    verification: 'Unit secure, fed and branched correctly, directory accurate, grounded',
+                    codeRefs: ['NEC 408', '408.36', '408.41', '250.24', '250.110', '110.26']
                 }
+            ],
+            deliverables: [
+                'Switchgear assembled, anchored, and interconnected',
+                'Transformers installed, oil-filled, and tested',
+                'MCCs assembled and anchored',
+                'Motors and drives installed and aligned',
+                'Panelboards mounted, fed, branched, and grounded'
             ]
         },
         {
-            id: 'protectionControl',
+            id: 'roughIn',
             number: 4,
-            title: 'Protection, Control & SCADA',
-            icon: '🛡️',
-            color: 'blue',
-            description: 'Relay settings, SCADA integration, communication, cybersecurity',
-            cards: [
+            title: 'Phase 4: Rough-In Wiring',
+            icon: '🔌',
+            color: 'green',
+            description: 'Conductor pulling, termination, device installation',
+            estimatedHours: { jm: 160, ap: 160, helper: 80 }, // per 1000 ft conduit
+            steps: [
                 {
-                    id: 'relaySettings',
-                    title: 'Protective Relay Settings Verification',
-                    icon: '⚙️',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Verify all relay settings against coordination study', ref: '' },
-                        { text: 'Document settings: pickup, time dial, curves, logic', ref: '' },
-                        { text: 'Test relays: primary injection, secondary injection', ref: 'IEEE C37.90' },
-                        { text: 'Verify scheme logic: DCUB, POTT, DTT, DUTT, 87', ref: '' },
-                        { text: 'Check time sync: IRIG-B, SNTP, IEEE 1588 (PTP)', ref: 'IEEE 1588' },
-                        { text: 'Event records: COMTRADE, sequential events recorder', ref: 'IEEE C37.111' },
-                        { text: 'Breaker failure: 50BF settings, initiate/trip logic', ref: '' }
-                    ]
+                    order: 1,
+                    title: '4.1 Cable Pulling Preparation',
+                    type: 'electrical',
+                    duration: { jm: 16, ap: 8 },
+                    crew: { jm: 2, ap: 1 },
+                    materials: ['Pulling lubricant', 'Pulling eyes/ grips', 'Swivels', 'Release tape'],
+                    tools: ['Pulling winch', 'Tension meter', 'Dynamometer', 'Cable rollers'],
+                    instructions: [
+                        'Calculate pulling tension: use IEEE 141 formula, check sidewall pressure',
+                        'Select pulling method: hand winch for <1000ft, power winch for >1000ft',
+                        'Prepare cable ends: attach pulling eye or grip with approved knot/splice',
+                        'Apply lubricant: to conduit entrance and periodically during pull',
+                        'Use proper equipment: sheaves, rollers, brakes to control tension',
+                        'Monitor tension: never exceed 60% of conductor nominal breaking strength',
+                        'Use swivels: to prevent torque buildup in armored cable'
+                    ],
+                    verification: 'Pull plan approved, equipment ready, lubrication applied',
+                    codeRefs: ['IEEE 141', 'NFPA 70E', 'NEC 300.17', 'Manufacturer pulling tensions']
                 },
                 {
-                    id: 'scada',
-                    title: 'SCADA & Communication Systems',
-                    icon: '🖥️',
-                    iconColor: 'green',
-                    checklist: [
-                        { text: 'Protocol: DNP3, IEC 61850, Modbus, EtherNet/IP', ref: '' },
-                        { text: 'RTU/IED integration: points list, scaling, alarms', ref: '' },
-                        { text: 'Communication media: fiber, radio, leased line, cellular', ref: '' },
-                        { text: 'Redundancy: dual paths, PRP/HSR, ring topology', ref: 'IEC 62439' },
-                        { text: 'Time synchronization: GPS, IRIG-B, NTP/PTP', ref: 'IEEE 1588' },
-                        { text: 'Cybersecurity: NERC CIP, firewalls, DMZ, patching', ref: 'NERC CIP' },
-                        { text: 'HMI/SCADA: displays, trends, reports, alarm management', ref: 'ISA 18.2' }
-                    ]
+                    order: 2,
+                    title: '4.2 Conductor Installation',
+                    type: 'electrical',
+                    duration: { jm: 80, ap: 80, helper: 40 },
+                    crew: { jm: 4, ap: 4, helper: 2 },
+                    materials: ['THHN/THWN/XHHW-2 wire', 'MC cable', 'TS cable', 'Grounding wire'],
+                    tools: ['Wire strippers', 'Crimp tool', 'Torque wrench', 'Cable cutters', 'Fish tape'],
+                    instructions: [
+                        'Verify conductor insulation: rating matches or exceeds temperature limits',
+                        'Strip insulation: to correct length per lug size, avoid nicking conductor',
+                        'Install lugs: crimp with proper die, inspect for proper compression',
+                        'Apply antioxidant: to aluminum conductors before installing lugs',
+                        'Terminate in equipment: torque lugs to manufacturer specification',
+                        'Maintain phase identification: use tape, tags, or colored wire throughout',
+                        'Keep neutral isolated: in subpanels and equipment per NEC 250.142(B)'
+                    ],
+                    verification: 'All conductors terminated, lugs torqued, phase ID maintained, neutral isolated',
+                    codeRefs: ['NEC 310.15', '310.16', '110.14(B)', '300.17', '250.142(B)', '250.102(C)']
                 },
                 {
-                    id: 'automation',
-                    title: 'Process Automation Integration',
-                    icon: '🤖',
-                    iconColor: 'purple',
-                    checklist: [
-                        { text: 'PLC/DCS: power supply, UPS, grounding', ref: '' },
-                        { text: 'Safety systems: SIS, BMS, ESD - power separation', ref: 'IEC 61511' },
-                        { text: 'Network: OT/IT separation, VLANs, conduits', ref: 'ISA 99/IEC 62443' },
-                        { text: 'Historian: data retention, compression, redundancy', ref: '' },
-                        { text: 'MES/ERP integration: energy, production, maintenance', ref: '' }
-                    ]
+                    order: 3,
+                    title: '4.3 Device and Equipment Connection',
+                    type: 'electrical',
+                    duration: { jm: 32, ap: 32, helper: 16 },
+                    crew: { jm: 4, ap: 4, helper: 2 },
+                    materials: ['Receptacles', 'Switches', 'Motor starters', 'Contactors', 'Relays', 'Terminal blocks'],
+                    tools: ['Screwdrapper set', 'Wire strippers', 'Torque wrench', 'Circuit tester', 'Label maker'],
+                    instructions: [
+                        'Verify device rating: voltage, current, pole count, enclosure type',
+                        'Connect line and load: correct terminals, observe polarity if DC',
+                        'Torque terminals: to manufacturer specification using calibrated tool',
+                        'Install grounding pigtail: if device has ground screw, connect to EGC',
+                        'Mount securely: to box or device, ears flush with surface, no wobble',
+                        'Apply thread locker: to mounting screws in vibration environments',
+                        'Label clearly: durable labels indicating function, circuit number, voltage'
+                    ],
+                    verification: 'Devices properly wired, terminated, grounded, mounted, and labeled',
+                    codeRefs: ['NEC 110.14(B)', '406.4(D)', '406.5', '406.9(B)', '250.146', '250.148']
+                },
+                {
+                    order: 4,
+                    title: '4.4 Motor and Equipment Connections',
+                    type: 'electrical',
+                    duration: { jm: 24, ap: 24, helper: 12 },
+                    crew: { jm: 3, ap: 3, helper: 2 },
+                    materials: ['Motor leads', 'Terminal lugs', 'Heat shrink', 'Electrical tape', 'Glands'],
+                    tools: ['Crimp tool', 'Torque wrench', 'Heat gun', 'Wire strippers', 'Insulation tester'],
+                    instructions: [
+                        'Use proper termination: lugs, clamps, or pressure connectors as listed',
+                        'Maintain strand integrity: do not cut strands when stripping',
+                        'Provide strain relief: within 12\" of termination, use clamps if needed',
+                        'Seal conduit entries: use listed hubs or connectors for wet/damp locations',
+                        'Phase motors correctly: T1-T2-T3 to L1-L2-L3, verify rotation',
+                        'Ground frames: via listed lug to equipment ground, not through conduit alone',
+                        'Protect flexible cords: strain relief, protection from abrasion and sharp edges'
+                    ],
+                    verification: 'Connections secure, strain relief provided, phase correct, grounded',
+                    codeRefs: ['NEC 110.14(B)', '300.15', '300.17', '430.12', '430.22', '430.24', '250.110']
                 }
+            ],
+            deliverables: [
+                'All conductors pulled and terminated',
+                'All devices and equipment connected',
+                'Continuity and polarity verified',
+                'Grounding continuity established throughout'
             ]
         },
         {
             id: 'testing',
             number: 5,
-            title: 'Testing, Commissioning & Acceptance',
+            title: 'Phase 5: Testing, Commissioning & Acceptance',
             icon: '🔬',
             color: 'green',
             description: 'Factory/field testing, commissioning, performance validation',
-            cards: [
+            estimatedHours: { jm: 24, ap: 12, cx: 16, net: 8 },
+            steps: [
                 {
-                    id: 'factoryTest',
-                    title: 'Factory Acceptance Testing (FAT)',
-                    icon: '🏭',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Switchgear: mechanical, electrical, Hi-pot, control', ref: 'IEEE C37.20.1/2' },
-                        { text: 'Transformers: ratio, polarity, excitation, impedance', ref: 'IEEE C57.12' },
-                        { text: 'Relay panels: wiring, logic, communication', ref: '' },
-                        { text: 'MCCs: bucket tests, VFD tests, communication', ref: '' },
-                        { text: 'Generator: load bank, governor, AVR, protection', ref: 'NFPA 110' },
-                        { text: 'UPS: load test, battery, bypass, harmonics', ref: '' }
-                    ]
+                    order: 1,
+                    title: '5.1 Pre-Functional Checklists',
+                    type: 'testing',
+                    duration: { jm: 16, ap: 8 },
+                    crew: { jm: 3, ap: 2 },
+                    tools: ['Torque wrench', 'Megger', 'Phase rotation meter', 'Continuity tester'],
+                    instructions: [
+                        'Verify all equipment installed per drawings/specs',
+                        'Check torque on all power connections (calibrated wrench)',
+                        'Verify phasing: A-B-C rotation at all panels',
+                        'Insulation resistance testing (Megger): feeders, motors, transformers',
+                        'Continuity testing: grounding, bonding, neutrals',
+                        'Verify breaker trip settings match coordination study'
+                    ],
+                    verification: 'All pre-functional checks passed, torque marks applied',
+                    codeRefs: ['NEC 110.14', '110.7', '250', '240', '700.32', 'NETA']
                 },
                 {
-                    id: 'fieldTest',
-                    title: 'Field Acceptance & Commissioning',
-                    icon: '📍',
-                    iconColor: 'green',
-                    checklist: [
-                        { text: 'Insulation resistance: all cables, bus, equipment (5kV+ megger)', ref: 'NETA ATS' },
-                        { text: 'Hi-pot testing: cables, bus, switchgear (per NETA)', ref: 'NETA ATS' },
-                        { text: 'Contact resistance: breakers, switches, bus joints', ref: 'NETA ATS' },
-                        { text: 'Breaker timing: open/close, travel, velocity', ref: 'IEEE C37.09' },
-                        { text: 'Relay testing: primary injection, end-to-end', ref: 'IEEE C37.90' },
-                        { text: 'Transformer turns ratio (TTR), excitation, winding resistance', ref: 'IEEE C57.12' },
-                        { text: 'Ground resistance: fall-of-potential, clamp-on', ref: 'IEEE 81' },
-                        { text: 'Thermographic survey: all connections, bus, cables', ref: 'NETA ATS, NFPA 70B' },
-                        { text: 'Phase rotation verification: A-B-C at all voltage levels', ref: '' },
-                        { text: 'Load bank test: generator, UPS at 100% rated load', ref: 'NFPA 110' }
-                    ]
+                    order: 2,
+                    title: '5.2 Functional Testing',
+                    type: 'testing',
+                    duration: { jm: 16, ap: 8 },
+                    crew: { jm: 3, ap: 2 },
+                    tools: ['GFCI tester', 'Load bank', 'Phase rotation meter', 'Transfer switch tester'],
+                    instructions: [
+                        'GFCI/GFPE trip testing at all devices',
+                        'Transfer switch: simulate normal failure, verify transfer',
+                        'Generator start/test under load',
+                        'Fire alarm: full system test with AHJ',
+                        'Lighting controls: scenes, schedules, sensors',
+                        'BAS/EMS: points check, graphics, alarms',
+                        'Verify arc flash labels match study'
+                    ],
+                    verification: 'All functional tests passed, test reports generated',
+                    codeRefs: ['NEC 210.8', '230.95', '700', '701', 'NFPA 110', 'NFPA 72', 'NFPA 70E']
                 },
                 {
-                    id: 'integratedCommissioning',
-                    title: 'Integrated Systems Commissioning',
-                    icon: '🔗',
-                    iconColor: 'purple',
-                    checklist: [
-                        { text: 'Protection scheme testing: trip, close, reclose, sync', ref: '' },
-                        { text: 'Generator: start, sync, load, reject, parallel', ref: 'NFPA 110' },
-                        { text: 'ATS/STS: transfer, retransfer, bypass isolation', ref: '' },
-                        { text: 'Load shedding: schemes, priorities, restoration', ref: '' },
-                        { text: 'Power management: demand control, peak shaving', ref: '' },
-                        { text: 'Arc flash mitigation: maintenance mode, RELT testing', ref: 'NFPA 70E' },
-                        { text: 'Black start: capability, sequence, testing', ref: '' },
-                        { text: 'Document all test results, deviations, resolutions', ref: '' }
-                    ]
+                    order: 3,
+                    title: '5.3 Integrated Systems Testing (IST)',
+                    type: 'testing',
+                    duration: { jm: 16, ap: 8 },
+                    crew: { jm: 3, ap: 2 },
+                    tools: ['BAS', 'Fire alarm panel', 'Generator controller', 'ATS controller'],
+                    instructions: [
+                        'Fire alarm → HVAC shutdown, damper control',
+                        'Power failure → generator start → ATS transfer → emergency loads',
+                        'BAS → lighting control → demand response',
+                        'Document all test results with pass/fail'
+                    ],
+                    verification: 'All integrated sequences verified, test reports signed',
+                    codeRefs: ['NFPA 72', 'IMC', 'NEC 700', '701', 'ASHRAE Guideline 0']
                 }
-            ]
-        },
-        {
-            id: 'maintenance',
-            number: 6,
-            title: 'Maintenance Programs & NFPA 70B',
-            icon: '🔧',
-            color: 'yellow',
-            description: 'Condition-based maintenance, reliability, compliance',
-            cards: [
-                {
-                    id: 'nfpa70b',
-                    title: 'NFPA 70B Electrical Maintenance Program',
-                    icon: '📋',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Develop EMP (Electrical Maintenance Program) per Chapter 4', ref: 'NFPA 70B Ch 4' },
-                        { text: 'Condition assessment: Chapter 9 (equipment condition)', ref: 'NFPA 70B Ch 9' },
-                        { text: 'Maintenance intervals: Table 9.2.2 (condition-based)', ref: 'NFPA 70B Table 9.2.2' },
-                        { text: 'Prioritize: Condition 1 (immediate), 2 (soon), 3 (normal)', ref: 'NFPA 70B 9.2' },
-                        { text: 'Document: single-line, equipment list, maintenance records', ref: 'NFPA 70B Ch 6' },
-                        { text: 'Training: qualified persons, safety, procedures', ref: 'NFPA 70B Ch 5, NFPA 70E' },
-                        { text: 'Spare parts: criticality analysis, lead times, stocking', ref: '' },
-                        { text: 'Predictive: IR, PD, DGA, oil, vibration, motor current signature', ref: '' }
-                    ]
-                },
-                {
-                    id: 'reliability',
-                    title: 'Reliability & Asset Management',
-                    icon: '📊',
-                    iconColor: 'green',
-                    checklist: [
-                        { text: 'RCM (Reliability Centered Maintenance) analysis', ref: 'SAE JA1011' },
-                        { text: 'Criticality ranking: safety, production, environmental', ref: '' },
-                        { text: 'MTBF/MTTR tracking, Weibull analysis', ref: '' },
-                        { text: 'Root cause analysis (RCA) for failures', ref: '' },
-                        { text: 'Spare transformer strategy: mobile, spare, sharing', ref: '' },
-                        { text: 'Aging asset management: transformers, breakers, cable', ref: 'IEEE C57.150' }
-                    ]
-                },
-                {
-                    id: 'safety',
-                    title: 'Electrical Safety Program (NFPA 70E)',
-                    icon: '🛡️',
-                    iconColor: 'red',
-                    checklist: [
-                        { text: 'ESP (Electrical Safety Program) documented', ref: 'NFPA 70E 110' },
-                        { text: 'Arc flash risk assessment: labels, boundaries, PPE', ref: 'NFPA 70E 130' },
-                        { text: 'Shock risk assessment: limited/restricted approach', ref: 'NFPA 70E 130' },
-                        { text: 'Energized work permits: justification, approval', ref: 'NFPA 70E 130' },
-                        { text: 'LOTO (Lockout/Tagout): procedures, training, audit', ref: 'NFPA 70E 120, OSHA 1910.147' },
-                        { text: 'PPE program: selection, inspection, storage, rating', ref: 'NFPA 70E 130' },
-                        { text: 'Annual audit of ESP, incident investigation', ref: 'NFPA 70E 110' }
-                    ]
-                }
+            ],
+            deliverables: [
+                'Pre-functional checklists (signed)',
+                'Functional test reports',
+                'Integrated systems test report',
+                'Commissioning report (CxA signed)',
+                'Arc flash label verification',
+                'Energy code compliance (COMcheck)'
             ]
         },
         {
             id: 'deliverables',
-            number: 7,
-            title: 'Final Documentation Package',
+            number: 6,
+            title: 'Phase 6: Final Documentation & Closeout',
             icon: '📦',
             color: 'blue',
-            description: 'Complete turnover package for owner, operations, maintenance',
-            cards: [
+            description: 'Complete documentation package for owner, AHJ, and O&M',
+            estimatedHours: { jm: 12, ap: 6, pm: 6 },
+            steps: [
                 {
-                    id: 'package',
-                    title: 'Owner Turnover Package',
-                    icon: '📁',
-                    iconColor: 'blue',
-                    checklist: [
-                        { text: 'Complete power system study reports (load flow, SC, coord, AF, harmonic)', ref: '' },
-                        { text: 'As-built single-line diagrams (all voltage levels)', ref: '' },
-                        { text: 'Protective relay settings sheets (all devices, all schemes)', ref: '' },
-                        { text: 'Arc flash labels installed + label schedule', ref: 'NFPA 70E, NEC 110.16' },
-                        { text: 'Equipment nameplate data sheets (all major equipment)', ref: '' },
-                        { text: 'Factory & field test reports (FAT, SAT, commissioning)', ref: '' },
-                        { text: 'Insulation resistance, Hi-pot, contact resistance, TTR reports', ref: '' },
-                        { text: 'Ground resistance test reports (substation, building)', ref: 'IEEE 81' },
-                        { text: 'Thermographic survey report (baseline)', ref: 'NFPA 70B' },
-                        { text: 'O&M manuals: all equipment (switchgear, xfmr, MCC, gen, UPS)', ref: '' },
-                        { text: 'Spare parts list: recommended, critical, long-lead', ref: '' },
-                        { text: 'Maintenance procedures: PM tasks, intervals, checklists', ref: 'NFPA 70B' },
-                        { text: 'EMP (Electrical Maintenance Program) per NFPA 70B', ref: 'NFPA 70B Ch 4' },
-                        { text: 'Electrical Safety Program (ESP) per NFPA 70E', ref: 'NFPA 70E 110' },
-                        { text: 'SCADA/RTU point database, displays, alarm setpoints', ref: '' },
-                        { text: 'Relay setting files (.rsd, .cid, .icd for IEC 61850)', ref: '' },
-                        { text: 'Protection coordination study: TCC curves, logic diagrams', ref: '' },
-                        { text: 'Short circuit study: duties, duties vs ratings', ref: '' },
-                        { text: 'Harmonic study: IEEE 519 compliance, filter settings', ref: 'IEEE 519' },
-                        { text: 'Generator/ATS test reports (NFPA 110 Level 1/2)', ref: 'NFPA 110' },
-                        { text: 'UPS/battery test reports (capacity, impedance)', ref: '' },
-                        { text: 'Cable pull records: tension, footage, megger per reel', ref: '' },
-                        { text: 'Cable schedule: from/to, size, type, length, conduit', ref: '' },
-                        { text: 'Conduit/cable tray schedule: routing, fill %, supports', ref: '' },
-                        { text: 'Lightning protection: UL 96A, NFPA 780 certification', ref: 'NFPA 780' },
-                        { text: 'Permits: electrical, building, environmental, utility', ref: '' },
-                        { text: 'Certificate of occupancy / final inspection sign-off', ref: '' },
-                        { text: 'Training records: operations, maintenance, safety', ref: '' },
-                        { text: 'Warranty documents: equipment, labor, performance', ref: '' },
-                        { text: 'Digital deliverables: PDF, CAD, ETAP/SKM/ETAP files, photos', ref: '' }
-                    ]
+                    order: 1,
+                    title: '6.1 Owner/AHJ Documentation Package',
+                    type: 'administrative',
+                    duration: { jm: 8, ap: 4, pm: 4 },
+                    crew: { jm: 2, ap: 2, pm: 2 },
+                    materials: ['Binders', 'USB drives', 'Project closeout checklist'],
+                    instructions: [
+                        'Load calculations (standard + optional) with demand factors',
+                        'Complete panel schedules (all panels, MCCs, switchboards)',
+                        'One-line diagram (as-built) with ratings, AIC, settings',
+                        'Short circuit, coordination, arc flash study reports',
+                        'Arc flash labels installed and documented',
+                        'GFCI/GFPE test logs',
+                        'Ground resistance test results',
+                        'Insulation resistance (Megger) test reports',
+                        'As-built drawings (PDF + CAD)',
+                        'Equipment submittals & O&M manuals',
+                        'Commissioning report (CxA signed)',
+                        'Energy code compliance documentation (COMcheck)',
+                        'Fire alarm acceptance test (NFPA 72)',
+                        'Generator/ATS test reports (NFPA 110)',
+                        'Permit with final inspection sign-off',
+                        'Owner training records and video',
+                        'Warranty documents and contact list'
+                    ],
+                    verification: 'Complete turnover package delivered to owner and AHJ',
+                    codeRefs: ['NEC 220', '408.4', '110.24', '110.16', '110.24', '210.8', '230.95', '250.53', '240', '700.32', '701.27', '708.54', 'NFPA 110', 'NFPA 72', 'IECC C408']
                 }
+            ],
+            deliverables: [
+                'Complete turnover package (digital + physical)',
+                'Owner training completion certificates',
+                'Final lien waivers',
+                'Warranty registration confirmations'
             ]
         }
     ]
@@ -439,3 +734,8 @@ const industrialData = {
 
 // Export for browser
 window.industrialData = industrialData;
+
+// Export for Node/CommonJS
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = industrialData;
+}
